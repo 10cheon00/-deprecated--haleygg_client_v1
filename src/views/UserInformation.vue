@@ -14,7 +14,6 @@
         <div class="flex lg12 md12 sm12 xs12">
           <GameResultsCard :gameResults="gameResults" />
         </div>
-
       </div>
     </div>
   </div>
