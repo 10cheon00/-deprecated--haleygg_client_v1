@@ -3,16 +3,16 @@
     <!-- User Information -->
     <UserInfoCard :userInformation="userInformation" />
     <va-divider />
-    <div class="layout gutter--md">
-      <div class="row flex">
-        <!-- Recent games -->
-        <div class="lg8 md12 sm12 xs12">
-          <GameResultsCard :gameResults="gameResults" />
+    <div class="layout gutter--lg">
+      <div class="row">
+        <!-- Statistics -->
+        <div class="flex lg12 md12 sm12 xs12" >
+          <UserStatisticsCard />
         </div>
 
-        <!-- Statistics -->
-        <div class="lg4 md12 sm12 xs12">
-          <UserStatisticsCard/>
+        <!-- Recent games -->
+        <div class="flex lg12 md12 sm12 xs12">
+          <GameResultsCard :gameResults="gameResults" />
         </div>
       </div>
     </div>
