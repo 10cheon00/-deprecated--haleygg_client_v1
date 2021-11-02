@@ -1,18 +1,27 @@
 <template>
   <div class="layout">
     <!-- User Information -->
-    <UserInfoCard :userInformation="userInformation" />
+    <UserProfileCard 
+      v-if="userInformation.profile"
+      :profile="userInformation.profile" 
+    />
     <va-divider />
     <div class="layout gutter--lg">
       <div class="row">
         <!-- Statistics -->
         <div class="flex lg12 md12 sm12 xs12" >
-          <UserStatisticsCard />
+          <UserStatisticsCard 
+            v-if="userInformation.elo"
+            :elo="userInformation.elo"
+          />
         </div>
 
         <!-- Recent games -->
         <div class="flex lg12 md12 sm12 xs12">
-          <GameResultsCard :gameResults="gameResults" />
+          <UserGameResultsCard 
+            v-if="userInformation.gameResults"
+            :gameResults="userInformation.gameResults" 
+          />
         </div>
       </div>
     </div>
@@ -22,38 +31,34 @@
 <script>
 import { ref, onMounted, defineComponent } from "vue";
 
-import GameResultsCard from "@/components/GameResultsCard.vue";
-import UserInfoCard from "@/components/UserInfoCard.vue";
+import UserGameResultsCard from "@/components/UserGameResultsCard.vue";
+import UserProfileCard from "@/components/UserProfileCard.vue";
 import UserStatisticsCard from "@/components/UserStatisticsCard.vue";
 
-import {
-  fetchGameResultFromApi,
-  fetchUserInformationFromApi,
-} from "@/plugins/gameresult-api.js";
+import { fetchUserInformationFromApi } from "@/plugins/gameresult-api.js";
 
 export default defineComponent({
   props: {
     userName: {
       type: String,
       required: true,
-    },
+    }
   },
   components: {
-    GameResultsCard,
-    UserInfoCard,
+    UserGameResultsCard,
+    UserProfileCard,
     UserStatisticsCard,
   },
   setup(props) {
-    const gameResults = ref([]);
     const userInformation = ref({});
 
     onMounted(() => {
-      gameResults.value = fetchGameResultFromApi();
-      userInformation.value = fetchUserInformationFromApi(props.userName);
+      setTimeout(() => {
+        userInformation.value = fetchUserInformationFromApi(props.userName);
+      }, 100)
     });
 
     return {
-      gameResults,
       userInformation,
     };
   },

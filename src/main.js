@@ -5,5 +5,7 @@ import { VuesticPlugin } from 'vuestic-ui'
 import 'vuestic-ui/dist/vuestic-ui.css'
 
 import getCustomVuesticConfig from '@/plugins/custom-vuestic-config.js'
+import { Chart, registerables } from 'chart.js'
 
+Chart.register(...registerables)
 createApp(App).use(router).use(VuesticPlugin,getCustomVuesticConfig()).mount('#app')

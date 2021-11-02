@@ -61,8 +61,8 @@ export default defineComponent({
   props: {
     gameResults: {
       type: Array,
-      required: true,
-    },
+      required: true
+    }
   },
   setup(props) {
     const itemsInPageCount = 4;
