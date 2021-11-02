@@ -51,8 +51,8 @@
             </div>
           </div>
           <!-- ELO Chart -->
-          <div class="flex  lg6 md12 sm12 xs12">
-            <BaseEloChart />
+          <div class="flex lg6 md12 sm12 xs12">
+            <BaseEloChart v-if="elo" :elo="elo"/>
           </div>
         </div>
       </va-card-content>
@@ -71,6 +71,17 @@ export default defineComponent({
     BaseCircularPercentageChart,
     BaseEloChart,
   },
-  setup() {},
+  props: {
+    // winRates: {
+    //   type: Array,
+    //   required: true
+    // },
+    elo: {
+      type: Array,
+      required: true
+    }
+  },
+  setup() {
+  },
 });
 </script>

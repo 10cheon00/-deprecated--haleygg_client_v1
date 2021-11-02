@@ -1,18 +1,27 @@
 <template>
   <div class="layout">
     <!-- User Information -->
-    <UserProfileCard :userInformation="userInformation" />
+    <UserProfileCard 
+      v-if="userInformation.profile"
+      :profile="userInformation.profile" 
+    />
     <va-divider />
     <div class="layout gutter--lg">
       <div class="row">
         <!-- Statistics -->
         <div class="flex lg12 md12 sm12 xs12" >
-          <UserStatisticsCard />
+          <UserStatisticsCard 
+            v-if="userInformation.elo"
+            :elo="userInformation.elo"
+          />
         </div>
 
         <!-- Recent games -->
         <div class="flex lg12 md12 sm12 xs12">
-          <UserGameResultsCard :gameResults="gameResults" />
+          <UserGameResultsCard 
+            v-if="userInformation.gameResults"
+            :gameResults="userInformation.gameResults" 
+          />
         </div>
       </div>
     </div>
@@ -26,17 +35,14 @@ import UserGameResultsCard from "@/components/UserGameResultsCard.vue";
 import UserProfileCard from "@/components/UserProfileCard.vue";
 import UserStatisticsCard from "@/components/UserStatisticsCard.vue";
 
-import {
-  fetchGameResultFromApi,
-  fetchUserInformationFromApi,
-} from "@/plugins/gameresult-api.js";
+import { fetchUserInformationFromApi } from "@/plugins/gameresult-api.js";
 
 export default defineComponent({
   props: {
     userName: {
       type: String,
       required: true,
-    },
+    }
   },
   components: {
     UserGameResultsCard,
@@ -44,16 +50,15 @@ export default defineComponent({
     UserStatisticsCard,
   },
   setup(props) {
-    const gameResults = ref([]);
     const userInformation = ref({});
 
     onMounted(() => {
-      gameResults.value = fetchGameResultFromApi();
-      userInformation.value = fetchUserInformationFromApi(props.userName);
+      setTimeout(() => {
+        userInformation.value = fetchUserInformationFromApi(props.userName);
+      }, 100)
     });
 
     return {
-      gameResults,
       userInformation,
     };
   },

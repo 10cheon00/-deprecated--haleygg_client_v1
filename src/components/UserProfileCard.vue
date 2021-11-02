@@ -2,18 +2,18 @@
   <div>
     <va-card
       class="user-information light"
-      :style="{ 'background-image': 'url(' + loadImageByRace(userInformation.most_race) + ')'}"
+      :style="{ 'background-image': 'url(' + loadImageByRace(profile.most_race) + ')'}"
     >
       <va-card-title class="flex align--start">
         <div class="user-name">
-          {{ userInformation.name }}
+          {{ profile.name }}
         </div>
         <div class="signup-date">
-          Signup date : {{ userInformation.signup_date }}
+          Signup date : {{ profile.signup_date }}
         </div>
       </va-card-title>
       <va-card-content class="background--light">
-        {{ userInformation.career }}
+        {{ profile.career }}
       </va-card-content>
     </va-card>
   </div>
@@ -24,13 +24,13 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   props: {
-    userInformation: {
+    profile: {
       name: String,
       most_race: String,
       signup_date: String,
       career: String,
-      required: true,
-    },
+      required: true
+    }
   },
   setup() {
     const loadImageByRace = (race) => {
@@ -45,7 +45,7 @@ export default defineComponent({
     };
 
     return {
-      loadImageByRace,
+      loadImageByRace
     };
   },
 });
