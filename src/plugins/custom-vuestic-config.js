@@ -13,9 +13,9 @@ export default function getCustomVuesticConfig() {
 
             // Custom colors
             light: '#f8f9fa',
-            protoss: '#c5a02e',
-            terran: '#1a56ae',
-            zerg:  '#551f81',
+            protoss: '#ecd039',
+            terran: '#1d73dd',
+            zerg:  '#7424ae',
         }
     };
     return config;

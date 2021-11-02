@@ -1,7 +1,7 @@
 <template>
   <div class="layout">
     <!-- User Information -->
-    <UserInfoCard :userInformation="userInformation" />
+    <UserProfileCard :userInformation="userInformation" />
     <va-divider />
     <div class="layout gutter--lg">
       <div class="row">
@@ -12,7 +12,7 @@
 
         <!-- Recent games -->
         <div class="flex lg12 md12 sm12 xs12">
-          <GameResultsCard :gameResults="gameResults" />
+          <UserGameResultsCard :gameResults="gameResults" />
         </div>
       </div>
     </div>
@@ -22,8 +22,8 @@
 <script>
 import { ref, onMounted, defineComponent } from "vue";
 
-import GameResultsCard from "@/components/GameResultsCard.vue";
-import UserInfoCard from "@/components/UserInfoCard.vue";
+import UserGameResultsCard from "@/components/UserGameResultsCard.vue";
+import UserProfileCard from "@/components/UserProfileCard.vue";
 import UserStatisticsCard from "@/components/UserStatisticsCard.vue";
 
 import {
@@ -39,8 +39,8 @@ export default defineComponent({
     },
   },
   components: {
-    GameResultsCard,
-    UserInfoCard,
+    UserGameResultsCard,
+    UserProfileCard,
     UserStatisticsCard,
   },
   setup(props) {
