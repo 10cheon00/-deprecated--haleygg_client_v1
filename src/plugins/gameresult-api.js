@@ -4,12 +4,13 @@ const gameResults = [
     "date": "2021-10-22",
     "league": "EPL",
     "description": "1라운드",
+    "game_type": "melee",
     "winners": [
-      "Kevin"
+      {"user": "Kevin", "race": "terran"}
     ],
     "map": "서킷",
     "losers": [
-      "Dave"
+      {"user": "Dave", "race": "zerg"}
     ],
     "remarks": ""
   },
@@ -18,12 +19,13 @@ const gameResults = [
     "date": "2021-10-23",
     "league": "EPL",
     "description": "2라운드",
+    "game_type": "melee",
     "winners": [
-      "Dave"
+      {"user": "Dave", "race": "zerg"}
     ],
     "map": "투혼",
     "losers": [
-      "Kevin"
+      {"user": "Kevin", "race": "terran"}
     ],
     "remarks": "기권패"
   },
@@ -33,15 +35,15 @@ const gameResults = [
     "league": "EPL",
     "description": "3라운드",
     "winners": [
-      "Dave",
-      "Robb",
-      "Ned",
+      {"user": "Dave", "race": "zerg"},
+      {"user": "Robb", "race": "zerg"},
+      {"user": "Bob", "race": "terran"}
     ],
     "map": "헌터",
     "losers": [
-      "Kevin",
-      "Steven",
-      "Gale"
+      {"user": "Kevin", "race": "terran"},
+      {"user": "John", "race": "protoss"},
+      {"user": "Steve", "race": "protoss"}
     ],
     "remarks": ""
   },
@@ -50,12 +52,13 @@ const gameResults = [
     "date": "2021-10-23",
     "league": "test",
     "description": "test",
+    "game_type": "melee",
     "winners": [
-      "Dave"
+      {"user": "Kevin", "race": "terran"}
     ],
     "map": "tes",
     "losers": [
-      "Kevin"
+      {"user": "Dave", "race": "zerg"}
     ],
     "remarks": ""
   },
@@ -64,12 +67,13 @@ const gameResults = [
     "date": "2021-10-23",
     "league": "test",
     "description": "test",
+    "game_type": "melee",
     "winners": [
-      "Dave"
+      {"user": "Dave", "race": "zerg"}
     ],
     "map": "test1",
     "losers": [
-      "Kevin"
+      {"user": "Kevin", "race": "terran"}
     ],
     "remarks": ""
   },
@@ -78,12 +82,13 @@ const gameResults = [
     "date": "2021-10-23",
     "league": "test",
     "description": "test2",
+    "game_type": "melee",
     "winners": [
-      "Dave"
+      {"user": "Kevin", "race": "terran"}
     ],
     "map": "test",
     "losers": [
-      "Kevin"
+      {"user": "Dave", "race": "zerg"}
     ],
     "remarks": ""
   },
@@ -92,12 +97,13 @@ const gameResults = [
     "date": "2021-10-23",
     "league": "test",
     "description": "test3",
+    "game_type": "melee",
     "winners": [
-      "Dave"
+      {"user": "Dave", "race": "zerg"}
     ],
     "map": "test",
     "losers": [
-      "Kevin"
+      {"user": "Kevin", "race": "terran"}
     ],
     "remarks": ""
   },
@@ -107,12 +113,13 @@ const gameResults = [
     "date": "2021-10-23",
     "league": "test",
     "description": "test4",
+    "game_type": "melee",
     "winners": [
-      "Dave"
+      {"user": "Kevin", "race": "terran"}
     ],
     "map": "test",
     "losers": [
-      "Kevin"
+      {"user": "Dave", "race": "zerg"}
     ],
     "remarks": ""
   },
@@ -121,12 +128,13 @@ const gameResults = [
     "date": "2021-10-23",
     "league": "test",
     "description": "test5",
+    "game_type": "melee",
     "winners": [
-      "Dave"
+      {"user": "Dave", "race": "zerg"}
     ],
     "map": "test",
     "losers": [
-      "Kevin"
+      {"user": "Kevin", "race": "terran"}
     ],
     "remarks": ""
   },
@@ -135,12 +143,13 @@ const gameResults = [
     "date": "2021-10-23",
     "league": "test",
     "description": "test6",
+    "game_type": "melee",
     "winners": [
-      "Dave"
+      {"user": "Kevin", "race": "terran"}
     ],
     "map": "test",
     "losers": [
-      "Kevin"
+      {"user": "Dave", "race": "zerg"}
     ],
     "remarks": ""
   },
@@ -149,12 +158,13 @@ const gameResults = [
     "date": "2021-10-23",
     "league": "test",
     "description": "test",
+    "game_type": "melee",
     "winners": [
-      "Dave"
+      {"user": "Dave", "race": "zerg"}
     ],
     "map": "test",
     "losers": [
-      "Kevin"
+      {"user": "Kevin", "race": "terran"}
     ],
     "remarks": ""
   },
@@ -163,12 +173,13 @@ const gameResults = [
     "date": "2021-10-23",
     "league": "test",
     "description": "testaa",
+    "game_type": "melee",
     "winners": [
-      "Dave"
+      {"user": "Dave", "race": "zerg"}
     ],
     "map": "test",
     "losers": [
-      "Kevin"
+      {"user": "Kevin", "race": "terran"}
     ],
     "remarks": ""
   },
@@ -178,12 +189,13 @@ const gameResults = [
     "date": "2021-10-23",
     "league": "test",
     "description": "testaaasd",
+    "game_type": "melee",
     "winners": [
-      "Dave"
+      {"user": "Dave", "race": "zerg"}
     ],
     "map": "test",
     "losers": [
-      "Kevin"
+      {"user": "Kevin", "race": "terran"}
     ],
     "remarks": ""
   },
@@ -191,13 +203,13 @@ const gameResults = [
 
 const userProfiles = [
   {
-    "name": "Kevin",
+    "name": {"user": "Kevin", "race": "terran"},
     "most_race": "terran",
     "signup_date": "2021-10-21",
     "career": "empty"
   },
   {
-    "name": "Dave",
+    "name": {"user": "Dave", "race": "zerg"},
     "most_race": "protoss",
     "signup_date": "2021-09-02",
     "career": "league mvp"
@@ -244,11 +256,103 @@ const fetchUserInformationFromApi = (userName) => {
   */
 
   let userInformation = {};
+  
+  userInformation["profile"] = userProfiles.find(e => e["name"] == userName);
+  userInformation["elo"] = userElos.find(e => e["name"] == userName)["elo"];
+  userInformation["gameResults"] = gameResults;
+  
+  let winRates = parseGameResult(userInformation["gameResults"], userName)
+  userInformation["winRates"] = calculateWinRate(winRates);
 
-  userInformation['profile'] = userProfiles.find(e => e["name"] == userName);
-  userInformation['elo'] = userElos.find(e => e["name"] == userName)['elo'];
-  userInformation['gameResults'] = gameResults;
-  return userInformation
+  return userInformation;
+}
+
+const parseGameResult = (gameResults, userName) => {
+  let winRates = {
+    melee: {
+      total: {
+        games: 0,
+        wins: 0,
+        rate: 0
+      },
+      protoss: {
+        games: 0,
+        wins: 0,
+        rate: 0
+      },
+      terran: {
+        games: 0,
+        wins: 0,
+        rate: 0
+      },
+      zerg: {
+        games: 0,
+        wins: 0,
+        rate: 0
+      }
+    },
+    topAndBottom: {
+        games: 0,
+        wins: 0,
+        rate: 0
+    }
+  };
+  
+  const isUserWin = (user, winners) => {
+    return winners.some(e => e["user"] == user);
+  }
+
+  // presuppose that all result is related to player who given.
+  gameResults.forEach(game => {
+    if(game["game_type"] == "melee"){
+      // presume user loses.
+      let opponentRace = game["winners"][0]["race"]; 
+      if(isUserWin(userName, game["winners"])){
+        // but user wins, change opponent race.
+        opponentRace = game["losers"][0]["race"];
+        winRates["melee"][opponentRace].wins++;
+      }
+      winRates["melee"][opponentRace].games++;
+    }
+    else{
+      // Top and bottom games doesn't count by race.
+      // Does only count win.
+      if(isUserWin(userName, game["winners"])){
+        winRates["topAndBottom"].wins++;
+      }
+      winRates["topAndBottom"].games++;
+    }
+  });
+
+  winRates["melee"]["total"].games = 
+    winRates["melee"]["protoss"].games +
+    winRates["melee"]["terran"].games +
+    winRates["melee"]["zerg"].games;
+
+  winRates["melee"]["total"].wins = 
+    winRates["melee"]["protoss"].wins +
+    winRates["melee"]["terran"].wins +
+    winRates["melee"]["zerg"].wins;
+  return winRates;
+}
+
+
+const calculateWinRate = (winRates) => {
+  const calculatePercentage = (obj) => {
+    obj.rate = Math.floor(obj.wins / obj.games * 1000 ) / 10;
+    if(isNaN(obj.rate)){
+      obj.rate = 0;
+    }
+    return obj;
+  }
+
+  winRates["melee"]["total"] = calculatePercentage(winRates["melee"]["total"]);
+  winRates["melee"]["protoss"] = calculatePercentage(winRates["melee"]["protoss"]);
+  winRates["melee"]["terran"] = calculatePercentage(winRates["melee"]["terran"]);
+  winRates["melee"]["zerg"] = calculatePercentage(winRates["melee"]["zerg"]);
+  winRates["topAndBottom"] = calculatePercentage(winRates["topAndBottom"]);
+
+  return winRates;
 }
 
 export {

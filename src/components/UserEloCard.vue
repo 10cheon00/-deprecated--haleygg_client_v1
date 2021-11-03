@@ -1,11 +1,14 @@
 <template>
   <div>
-    <div class="row">
-      <div class="flex md12">Elo</div>
-      <div class="flex md12">
-        <LineChart style="height:200px" :chartData="testData" :options="options" />
-      </div>
-    </div>
+    <va-card >
+      <va-card-title>Elo Chart</va-card-title>
+      <va-card-content >
+        <LineChart
+          :chartData="testData"
+          :options="options"
+        />
+      </va-card-content>
+    </va-card>
   </div>
 </template>
 
@@ -44,7 +47,6 @@ export default defineComponent({
           display: false,
         },
       },
-      pointRadius: 10
     };
 
     return {

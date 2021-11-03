@@ -7,10 +7,16 @@
     />
     <va-divider />
     <div class="layout gutter--lg">
-      <div class="row">
+      <div class="row justify--center">
         <!-- Statistics -->
-        <div class="flex lg12 md12 sm12 xs12" >
-          <UserStatisticsCard 
+        <div class="flex xl6 lg6 md12 sm12 xs12" style="height:100%">
+          <UserWinRateCard 
+            v-if="userInformation.winRates"
+            :winRates="userInformation.winRates"
+          />
+        </div>
+        <div  class="flex xl6 lg6 md12 sm12 xs12">
+          <UserEloCard 
             v-if="userInformation.elo"
             :elo="userInformation.elo"
           />
@@ -33,7 +39,8 @@ import { ref, onMounted, defineComponent } from "vue";
 
 import UserGameResultsCard from "@/components/UserGameResultsCard.vue";
 import UserProfileCard from "@/components/UserProfileCard.vue";
-import UserStatisticsCard from "@/components/UserStatisticsCard.vue";
+import UserWinRateCard from "@/components/UserWinRateCard.vue";
+import UserEloCard from "@/components/UserEloCard.vue";
 
 import { fetchUserInformationFromApi } from "@/plugins/gameresult-api.js";
 
@@ -47,10 +54,11 @@ export default defineComponent({
   components: {
     UserGameResultsCard,
     UserProfileCard,
-    UserStatisticsCard,
+    UserWinRateCard,
+    UserEloCard,
   },
   setup(props) {
-    const userInformation = ref({});
+    const userInformation = ref(Object);
 
     onMounted(() => {
       setTimeout(() => {

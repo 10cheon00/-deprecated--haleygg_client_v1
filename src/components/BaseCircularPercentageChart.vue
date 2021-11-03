@@ -2,12 +2,19 @@
   <div class="row align--center justify--center">
     <div class="flex md12 sm12 xs12 title">{{ title }}</div>
     <div class="flex md12 sm12 xs12">
-      <svg class="percentage-bar" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="40" fill="#eeeeee" />
+      <svg class="percentage-bar" :viewBox="viewBox" style="max-height: 140px">
         <path
           fill="none"
-          stroke-linecap="round"
-          stroke-width="5"
+          stroke-linecap="straight"
+          :stroke-width="strokeWidth"
+          stroke="#EEEEEE"
+          :stroke-dasharray="maxLength"
+          :d="pathCommand"
+        />
+        <path
+          fill="none"
+          stroke-linecap="straight"
+          :stroke-width="strokeWidth"
           :stroke="color"
           :stroke-dasharray="strokeLength"
           :d="pathCommand"
@@ -17,7 +24,7 @@
           dominant-baseline="middle"
           x="50%"
           y="52%"
-          style="font-weight: bold"
+          style="font: 0.5rem; font-weight: bold;"
         >
           {{ percentage }}%
         </text>
@@ -27,16 +34,12 @@
 </template>
 
 <script>
-import { ref, defineComponent } from "vue";
+import { ref, defineComponent, computed } from "vue";
 
 export default defineComponent({
   props: {
-    radius: {
-      type: Number,
-      required: true,
-      validator: (value) => {
-        return 0 <= value && value <= 50;
-      },
+    title: {
+      type: String,
     },
     percentage: {
       type: Number,
@@ -47,40 +50,35 @@ export default defineComponent({
     },
     color: {
       type: String,
-      default: "#28a745",
+      default: "#28A745",
     },
-    title: {
-      type: String,
+    size: {
+      type: Number,
+      default: 50,
     },
   },
   setup(props) {
     //M50 20  Move to (50,20) ... 50 = x value of center of circle , 20 = y value of center of circle substract radius
     //a 30 30 0 0 1 0 60  a is angle. 30 30 is (30, 30) (radius, radius) 0 0 1 0 .. what is this. last element is double radius
     //a 30 30 0 0 1 0 -60
-    const maxLength = props.radius * 2 * Math.PI;
-    const length = (maxLength / 100) * props.percentage;
-    const strokeLength = ref(length.toString() + " " + maxLength.toString());
-    const pathCommand = ref(String);
-    pathCommand.value = "M" + 50 + " " + (50 - props.radius).toString() + " ";
-    pathCommand.value +=
-      "a " +
-      props.radius.toString() +
-      " " +
-      props.radius.toString() +
-      " 0 0 1 0 " +
-      (props.radius * 2).toString() +
-      " ";
-    pathCommand.value +=
-      "a " +
-      props.radius.toString() +
-      " " +
-      props.radius.toString() +
-      " 0 0 1 0 " +
-      (props.radius * -2).toString() +
-      " ";
+    const radius = props.size * 0.8;
+    const viewBox = ref(`0 0 ${props.size * 2} ${props.size * 2}`);
+    const maxLength = radius * 2 * Math.PI;
+    const strokeWidth = ref(radius * 0.375);
+    const strokeLength = computed(() => {
+      return `${(maxLength / 100) * props.percentage} ${maxLength}`;
+    });
+    const pathCommand = ref(
+      `M${props.size} ${props.size - radius} 
+      a ${radius} ${radius} 0 0 1 0 ${radius * 2} 
+      a ${radius} ${radius} 0 0 1 0 ${radius * -2}`
+    );
     return {
+      viewBox,
       pathCommand,
+      strokeWidth,
       strokeLength,
+      maxLength,
     };
   },
 });
@@ -89,6 +87,7 @@ export default defineComponent({
 <style scoped>
 .title {
   color: var(--va-dark);
-  font: bold 0.5rem;
+  font: 0.5rem;
+  font-weight: bold;
 }
 </style>

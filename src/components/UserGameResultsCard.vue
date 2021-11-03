@@ -25,12 +25,12 @@
               <td>{{ gameResult.description }}</td>
               <td>
                 <div v-for="player in gameResult.winners" :key="player">
-                  <p>{{ player }}</p>
+                  <p>{{ player.user }} ({{ player.race }})</p>
                 </div>
               </td>
               <td>
                 <div v-for="player in gameResult.losers" :key="player">
-                  <p>{{ player }}</p>
+                  <p>{{ player.user }} ({{ player.race }})</p>
                 </div>
               </td>
               <td>{{ gameResult.map }}</td>
@@ -61,8 +61,8 @@ export default defineComponent({
   props: {
     gameResults: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props) {
     const itemsInPageCount = 4;
