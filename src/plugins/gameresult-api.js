@@ -248,7 +248,7 @@ const userElos = [
   }
 ];
 
-const fetchUserInformationFromApi = (userName) => {
+const fetchPlayerInformationFromApi = (userName) => {
   /*
   Server must return a couple of items. 
   profile, game results, elo, etc. (to be added..)
@@ -298,7 +298,7 @@ const parseGameResult = (gameResults, userName) => {
     }
   };
   
-  const isUserWin = (user, winners) => {
+  const isPlayerWin = (user, winners) => {
     return winners.some(e => e["user"] == user);
   }
 
@@ -307,7 +307,7 @@ const parseGameResult = (gameResults, userName) => {
     if(game["game_type"] == "melee"){
       // presume user loses.
       let opponentRace = game["winners"][0]["race"]; 
-      if(isUserWin(userName, game["winners"])){
+      if(isPlayerWin(userName, game["winners"])){
         // but user wins, change opponent race.
         opponentRace = game["losers"][0]["race"];
         winRates["melee"][opponentRace].wins++;
@@ -317,7 +317,7 @@ const parseGameResult = (gameResults, userName) => {
     else{
       // Top and bottom games doesn't count by race.
       // Does only count win.
-      if(isUserWin(userName, game["winners"])){
+      if(isPlayerWin(userName, game["winners"])){
         winRates["topAndBottom"].wins++;
       }
       winRates["topAndBottom"].games++;
@@ -356,5 +356,5 @@ const calculateWinRate = (winRates) => {
 }
 
 export {
-  fetchUserInformationFromApi
+  fetchPlayerInformationFromApi
 }

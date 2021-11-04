@@ -1,7 +1,7 @@
 <template>
   <div class="layout">
-    <!-- User Information -->
-    <UserProfileCard 
+    <!-- Player Information -->
+    <PlayerProfileCard 
       v-if="userInformation.profile"
       :profile="userInformation.profile" 
     />
@@ -10,13 +10,13 @@
       <div class="row justify--center">
         <!-- Statistics -->
         <div class="flex xl6 lg6 md12 sm12 xs12" style="height:100%">
-          <UserWinRateCard 
+          <PlayerWinRateCard 
             v-if="userInformation.winRates"
             :winRates="userInformation.winRates"
           />
         </div>
         <div  class="flex xl6 lg6 md12 sm12 xs12">
-          <UserEloCard 
+          <PlayerEloCard 
             v-if="userInformation.elo"
             :elo="userInformation.elo"
           />
@@ -24,7 +24,7 @@
 
         <!-- Recent games -->
         <div class="flex lg12 md12 sm12 xs12">
-          <UserGameResultsCard 
+          <PlayerGameResultsCard 
             v-if="userInformation.gameResults"
             :gameResults="userInformation.gameResults" 
           />
@@ -37,12 +37,12 @@
 <script>
 import { ref, onMounted, defineComponent } from "vue";
 
-import UserGameResultsCard from "@/components/UserGameResultsCard.vue";
-import UserProfileCard from "@/components/UserProfileCard.vue";
-import UserWinRateCard from "@/components/UserWinRateCard.vue";
-import UserEloCard from "@/components/UserEloCard.vue";
+import PlayerGameResultsCard from "@/components/PlayerGameResultsCard.vue";
+import PlayerProfileCard from "@/components/PlayerProfileCard.vue";
+import PlayerWinRateCard from "@/components/PlayerWinRateCard.vue";
+import PlayerEloCard from "@/components/PlayerEloCard.vue";
 
-import { fetchUserInformationFromApi } from "@/plugins/gameresult-api.js";
+import { fetchPlayerInformationFromApi } from "@/plugins/gameresult-api.js";
 
 export default defineComponent({
   props: {
@@ -52,17 +52,17 @@ export default defineComponent({
     }
   },
   components: {
-    UserGameResultsCard,
-    UserProfileCard,
-    UserWinRateCard,
-    UserEloCard,
+    PlayerGameResultsCard,
+    PlayerProfileCard,
+    PlayerWinRateCard,
+    PlayerEloCard,
   },
   setup(props) {
     const userInformation = ref(Object);
 
     onMounted(() => {
       setTimeout(() => {
-        userInformation.value = fetchUserInformationFromApi(props.userName);
+        userInformation.value = fetchPlayerInformationFromApi(props.userName);
       }, 100)
     });
 

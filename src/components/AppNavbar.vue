@@ -9,13 +9,13 @@
       </va-navbar-item>
       <va-navbar-item>
         <router-link
-          :to="{ name: 'UserInformation', params: { userName: 'Dave' } }"
+          :to="{ name: 'PlayerInformation', params: { userName: 'Dave' } }"
         >Dave
         </router-link>
       </va-navbar-item>
       <va-navbar-item>
         <router-link
-          :to="{ name: 'UserInformation', params: { userName: 'Kevin' } }"
+          :to="{ name: 'PlayerInformation', params: { userName: 'Kevin' } }"
         >Kevin
         </router-link>
       </va-navbar-item>
