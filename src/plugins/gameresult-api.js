@@ -1,270 +1,50 @@
-const gameResults = [
-  {
-    "id": 0,
-    "date": "2021-10-22",
-    "league": "EPL",
-    "description": "1라운드",
-    "game_type": "melee",
-    "winners": [
-      {"user": "Kevin", "race": "terran"}
-    ],
-    "map": "서킷",
-    "losers": [
-      {"user": "Dave", "race": "zerg"}
-    ],
-    "remarks": ""
-  },
-  {
-    "id": 1,
-    "date": "2021-10-23",
-    "league": "EPL",
-    "description": "2라운드",
-    "game_type": "melee",
-    "winners": [
-      {"user": "Dave", "race": "zerg"}
-    ],
-    "map": "투혼",
-    "losers": [
-      {"user": "Kevin", "race": "terran"}
-    ],
-    "remarks": "기권패"
-  },
-  {
-    "id": 2,
-    "date": "2021-10-24",
-    "league": "EPL",
-    "description": "3라운드",
-    "winners": [
-      {"user": "Dave", "race": "zerg"},
-      {"user": "Robb", "race": "zerg"},
-      {"user": "Bob", "race": "terran"}
-    ],
-    "map": "헌터",
-    "losers": [
-      {"user": "Kevin", "race": "terran"},
-      {"user": "John", "race": "protoss"},
-      {"user": "Steve", "race": "protoss"}
-    ],
-    "remarks": ""
-  },
-  {
-    "id": 3,
-    "date": "2021-10-23",
-    "league": "test",
-    "description": "test",
-    "game_type": "melee",
-    "winners": [
-      {"user": "Kevin", "race": "terran"}
-    ],
-    "map": "tes",
-    "losers": [
-      {"user": "Dave", "race": "zerg"}
-    ],
-    "remarks": ""
-  },
-  {
-    "id": 4,
-    "date": "2021-10-23",
-    "league": "test",
-    "description": "test",
-    "game_type": "melee",
-    "winners": [
-      {"user": "Dave", "race": "zerg"}
-    ],
-    "map": "test1",
-    "losers": [
-      {"user": "Kevin", "race": "terran"}
-    ],
-    "remarks": ""
-  },
-  {
-    "id": 5,
-    "date": "2021-10-23",
-    "league": "test",
-    "description": "test2",
-    "game_type": "melee",
-    "winners": [
-      {"user": "Kevin", "race": "terran"}
-    ],
-    "map": "test",
-    "losers": [
-      {"user": "Dave", "race": "zerg"}
-    ],
-    "remarks": ""
-  },
-  {
-    "id": 6,
-    "date": "2021-10-23",
-    "league": "test",
-    "description": "test3",
-    "game_type": "melee",
-    "winners": [
-      {"user": "Dave", "race": "zerg"}
-    ],
-    "map": "test",
-    "losers": [
-      {"user": "Kevin", "race": "terran"}
-    ],
-    "remarks": ""
-  },
+import { axiosInstance } from '@/plugins/axios-wrapper.js';
 
-  {
-    "id": 7,
-    "date": "2021-10-23",
-    "league": "test",
-    "description": "test4",
-    "game_type": "melee",
-    "winners": [
-      {"user": "Kevin", "race": "terran"}
-    ],
-    "map": "test",
-    "losers": [
-      {"user": "Dave", "race": "zerg"}
-    ],
-    "remarks": ""
-  },
-  {
-    "id": 8,
-    "date": "2021-10-23",
-    "league": "test",
-    "description": "test5",
-    "game_type": "melee",
-    "winners": [
-      {"user": "Dave", "race": "zerg"}
-    ],
-    "map": "test",
-    "losers": [
-      {"user": "Kevin", "race": "terran"}
-    ],
-    "remarks": ""
-  },
-  {
-    "id": 9,
-    "date": "2021-10-23",
-    "league": "test",
-    "description": "test6",
-    "game_type": "melee",
-    "winners": [
-      {"user": "Kevin", "race": "terran"}
-    ],
-    "map": "test",
-    "losers": [
-      {"user": "Dave", "race": "zerg"}
-    ],
-    "remarks": ""
-  },
-  {
-    "id": 10,
-    "date": "2021-10-23",
-    "league": "test",
-    "description": "test",
-    "game_type": "melee",
-    "winners": [
-      {"user": "Dave", "race": "zerg"}
-    ],
-    "map": "test",
-    "losers": [
-      {"user": "Kevin", "race": "terran"}
-    ],
-    "remarks": ""
-  },
-  {
-    "id": 11,
-    "date": "2021-10-23",
-    "league": "test",
-    "description": "testaa",
-    "game_type": "melee",
-    "winners": [
-      {"user": "Dave", "race": "zerg"}
-    ],
-    "map": "test",
-    "losers": [
-      {"user": "Kevin", "race": "terran"}
-    ],
-    "remarks": ""
-  },
+// const userElos = [
+//   {
+//     "name": "Kevin",
+//     "elo": [
+//       { date: "2021-10-21", value: 1200 },
+//       { date: "2021-10-22", value: 1201 },
+//       { date: "2021-10-23", value: 1226 },
+//       { date: "2021-10-25", value: 1212 },
+//       { date: "2021-10-30", value: 1199 },
+//       { date: "2021-11-01", value: 1180 },
+//       { date: "2021-12-12", value: 1195 },
+//       { date: "2021-12-13", value: 1203 },
+//     ]
+//   },
+//   {
+//     "name": "Dave",
+//     "elo": [
+//       { date: "2021-10-21", value: 1200 },
+//       { date: "2021-10-22", value: 1223 },
+//       { date: "2021-10-23", value: 1219 },
+//       { date: "2021-10-24", value: 1230 },
+//     ]
+//   }
+// ];
 
-  {
-    "id": 12,
-    "date": "2021-10-23",
-    "league": "test",
-    "description": "testaaasd",
-    "game_type": "melee",
-    "winners": [
-      {"user": "Dave", "race": "zerg"}
-    ],
-    "map": "test",
-    "losers": [
-      {"user": "Kevin", "race": "terran"}
-    ],
-    "remarks": ""
-  },
-]
-
-const userProfiles = [
-  {
-    "name": {"user": "Kevin", "race": "terran"},
-    "most_race": "terran",
-    "signup_date": "2021-10-21",
-    "career": "empty"
-  },
-  {
-    "name": {"user": "Dave", "race": "zerg"},
-    "most_race": "protoss",
-    "signup_date": "2021-09-02",
-    "career": "league mvp"
-  },
-  {
-    "name": "Robb",
-    "most_race": "zerg",
-    "signup_date": "2021-12-21",
-    "career": "league winner"
-  },
-];
-
-
-const userElos = [
-  {
-    "name": "Kevin",
-    "elo": [
-      { date: "2021-10-21", value: 1200 },
-      { date: "2021-10-22", value: 1201 },
-      { date: "2021-10-23", value: 1226 },
-      { date: "2021-10-25", value: 1212 },
-      { date: "2021-10-30", value: 1199 },
-      { date: "2021-11-01", value: 1180 },
-      { date: "2021-12-12", value: 1195 },
-      { date: "2021-12-13", value: 1203 },
-    ]
-  },
-  {
-    "name": "Dave",
-    "elo": [
-      { date: "2021-10-21", value: 1200 },
-      { date: "2021-10-22", value: 1223 },
-      { date: "2021-10-23", value: 1219 },
-      { date: "2021-10-24", value: 1230 },
-    ]
-  }
-];
-
-const fetchPlayerInformationFromApi = (userName) => {
+const fetchPlayerInformationFromApi = (userName, userInformationRef) => {
   /*
   Server must return a couple of items. 
   profile, game results, elo, etc. (to be added..)
   Request to server once. Server will response with data.
   */
 
-  let userInformation = {};
   
-  userInformation["profile"] = userProfiles.find(e => e["name"] == userName);
-  userInformation["elo"] = userElos.find(e => e["name"] == userName)["elo"];
-  userInformation["gameResults"] = gameResults;
-  
-  let winRates = parseGameResult(userInformation["gameResults"], userName)
-  userInformation["winRates"] = calculateWinRate(winRates);
-
-  return userInformation;
+  axiosInstance({
+    method: "GET",
+    url: '/player/' + userName + '/',
+  }).then(response => {
+    console.log(response.data)
+    userInformationRef.value["profile"] = response.data.profile;
+    userInformationRef.value["game_results"] = response.data.game_results;
+    
+    let winRates = parseGameResult(userInformationRef.value["game_results"], userName)
+    userInformationRef.value["winRates"] = calculateWinRate(winRates);
+  });
+  // userInformationRef.value["elo"] = userElos.find(e => e["name"] == userName)["elo"];
 }
 
 const parseGameResult = (gameResults, userName) => {
@@ -298,8 +78,8 @@ const parseGameResult = (gameResults, userName) => {
     }
   };
   
-  const isPlayerWin = (user, winners) => {
-    return winners.some(e => e["user"] == user);
+  const isPlayerWin = (username, winners) => {
+    return winners.some(e => e["name"] == username);
   }
 
   // presuppose that all result is related to player who given.
@@ -335,7 +115,6 @@ const parseGameResult = (gameResults, userName) => {
     winRates["melee"]["zerg"].wins;
   return winRates;
 }
-
 
 const calculateWinRate = (winRates) => {
   const calculatePercentage = (obj) => {

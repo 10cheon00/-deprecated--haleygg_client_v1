@@ -25,6 +25,7 @@ import { defineComponent } from "vue";
 export default defineComponent({
   props: {
     profile: {
+      id: Number,
       name: String,
       most_race: String,
       signup_date: String,

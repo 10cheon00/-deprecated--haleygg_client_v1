@@ -25,12 +25,12 @@
               <td>{{ gameResult.description }}</td>
               <td>
                 <div v-for="player in gameResult.winners" :key="player">
-                  <p>{{ player.user }} ({{ player.race }})</p>
+                  <p>{{ player.name }} ({{ player.race }})</p>
                 </div>
               </td>
               <td>
                 <div v-for="player in gameResult.losers" :key="player">
-                  <p>{{ player.user }} ({{ player.race }})</p>
+                  <p>{{ player.name }} ({{ player.race }})</p>
                 </div>
               </td>
               <td>{{ gameResult.map }}</td>
@@ -65,7 +65,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const itemsInPageCount = 4;
+    const itemsInPageCount = 10;
     const pageNumber = ref(1);
     const gameResultsLength = computed(() => {
       return Math.ceil(props.gameResults.length / itemsInPageCount);

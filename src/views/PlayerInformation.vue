@@ -25,8 +25,8 @@
         <!-- Recent games -->
         <div class="flex lg12 md12 sm12 xs12">
           <PlayerGameResultsCard 
-            v-if="userInformation.gameResults"
-            :gameResults="userInformation.gameResults" 
+            v-if="userInformation.game_results"
+            :gameResults="userInformation.game_results" 
           />
         </div>
       </div>
@@ -58,12 +58,15 @@ export default defineComponent({
     PlayerEloCard,
   },
   setup(props) {
-    const userInformation = ref(Object);
+    const userInformation = ref({
+      profile: null,
+      game_results: null,
+      winRates: null,
+      elo: null
+    });
 
     onMounted(() => {
-      setTimeout(() => {
-        userInformation.value = fetchPlayerInformationFromApi(props.userName);
-      }, 100)
+      fetchPlayerInformationFromApi(props.userName, userInformation);
     });
 
     return {
