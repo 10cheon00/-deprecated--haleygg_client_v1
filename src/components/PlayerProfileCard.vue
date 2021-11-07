@@ -1,11 +1,11 @@
 <template>
   <div>
     <va-card
-      class="user-information light"
+      class="player-information light"
       :style="{ 'background-image': 'url(' + loadImageByRace(profile.most_race) + ')'}"
     >
       <va-card-title class="flex align--start">
-        <div class="user-name">
+        <div class="player-name">
           {{ profile.name }}
         </div>
         <div class="signup-date">
@@ -25,6 +25,7 @@ import { defineComponent } from "vue";
 export default defineComponent({
   props: {
     profile: {
+      id: Number,
       name: String,
       most_race: String,
       signup_date: String,
@@ -52,12 +53,12 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.user-information {
+.player-information {
   background-repeat: no-repeat;
   background-size: 100%;
   color: #f8f9fa;
 }
-.user-name {
+.player-name {
   font-size: 3rem;
   text-transform: none;
 }

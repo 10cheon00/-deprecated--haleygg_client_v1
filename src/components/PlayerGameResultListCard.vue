@@ -19,18 +19,18 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="gameResult in paginatedGameResults" :key="gameResult.id">
+            <tr v-for="gameResult in paginatedGameResultList" :key="gameResult.id">
               <td>{{ gameResult.date }}</td>
               <td>{{ gameResult.league }}</td>
               <td>{{ gameResult.description }}</td>
               <td>
                 <div v-for="player in gameResult.winners" :key="player">
-                  <p>{{ player }}</p>
+                  <p>{{ player.name }} ({{ player.race }})</p>
                 </div>
               </td>
               <td>
                 <div v-for="player in gameResult.losers" :key="player">
-                  <p>{{ player }}</p>
+                  <p>{{ player.name }} ({{ player.race }})</p>
                 </div>
               </td>
               <td>{{ gameResult.map }}</td>
@@ -45,7 +45,7 @@
             flat
             size="small"
             v-model="pageNumber"
-            :pages="gameResultsLength"
+            :pages="gameResultListLength"
             :visible-pages="5"
           />
         </div>
@@ -59,20 +59,20 @@ import { ref, computed, defineComponent } from "vue";
 
 export default defineComponent({
   props: {
-    gameResults: {
+    gameResultList: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props) {
-    const itemsInPageCount = 4;
+    const itemsInPageCount = 10;
     const pageNumber = ref(1);
-    const gameResultsLength = computed(() => {
-      return Math.ceil(props.gameResults.length / itemsInPageCount);
+    const gameResultListLength = computed(() => {
+      return Math.ceil(props.gameResultList.length / itemsInPageCount);
     });
-    const paginatedGameResults = computed(() => {
-      if (Array.isArray(props.gameResults)) {
-        return props.gameResults.slice(
+    const paginatedGameResultList = computed(() => {
+      if (Array.isArray(props.gameResultList)) {
+        return props.gameResultList.slice(
           itemsInPageCount * pageNumber.value - itemsInPageCount,
           itemsInPageCount * pageNumber.value
         );
@@ -82,8 +82,8 @@ export default defineComponent({
     });
 
     return {
-      gameResultsLength,
-      paginatedGameResults,
+      gameResultListLength,
+      paginatedGameResultList,
       pageNumber,
     };
   },
