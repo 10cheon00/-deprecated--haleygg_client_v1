@@ -8,12 +8,17 @@ const routes = [
     component: Home
   },
   {
-    path: '/player/:userName',
+    path: '/player/:playerName',
     name: 'PlayerInformation',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '@/views/PlayerInformation.vue'),
+    props: true
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    component: () => import('@/views/404NotFound.vue'),
     props: true
   }
 ]
