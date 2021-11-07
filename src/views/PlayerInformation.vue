@@ -15,6 +15,7 @@
       </div>
       <div class="flex xl6 lg6 md12 sm12 xs12">
         <PlayerEloCard
+          hidden
           class="data"
           :elo="playerInformation.elo"
         />
@@ -78,13 +79,14 @@ export default defineComponent({
         const response = await fetchPlayerInformationUsingAxios(props.playerName);
         playerInformation.value.profile = response.data.profile;
         playerInformation.value.gameResultList = response.data.game_result_list;
+        playerInformation.value.elo = [];  // dummy data
 
         aggregateGameResultListToWinningRate();
         calculateWinningRate();
+        
 
         playerInformation.value.fetched = true;
       } catch (error) {
-        console.dir(error)
         if (error.response.status == 404) {
           router.push("/PlayerDoesNotExist");
         }
