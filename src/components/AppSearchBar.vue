@@ -25,6 +25,7 @@ export default defineComponent({
     const userName = ref("");
     const searchUser = () => {
       router.push('/player/' + userName.value)
+      userName.value = ""
     };
     return {
       searchUser,

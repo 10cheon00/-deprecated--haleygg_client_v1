@@ -28,7 +28,7 @@
               <div class="flex md4 sm4 xs4">
                 <BaseCircularPercentageChart
                   color="#ECD039"
-                  :percentage="winRates.melee.protoss.rate"
+                  :percentage="winRates.melee.P.rate"
                   :title="winRateOfProtossTitle"
                 />
               </div>
@@ -36,7 +36,7 @@
               <div class="flex md4 sm4 xs4">
                 <BaseCircularPercentageChart
                   color="#1D73DD"
-                  :percentage="winRates.melee.terran.rate"
+                  :percentage="winRates.melee.T.rate"
                   :title="winRateOfTerranTitle"
                 />
               </div>
@@ -44,7 +44,7 @@
               <div class="flex md4 sm4 xs4">
                 <BaseCircularPercentageChart
                   color="#7424AE"
-                  :percentage="winRates.melee.zerg.rate"
+                  :percentage="winRates.melee.Z.rate"
                   :title="winRateOfZergTitle"
                 />
               </div>
@@ -65,29 +65,9 @@ import BaseCircularPercentageChart from "@/components/BaseCircularPercentageChar
 export default defineComponent({
   props: {
     winRates: {
-      melee: {
-        protoss: {
-          type: Number,
-          default: 0,
-          required: true,
-        },
-        terran: {
-          type: Number,
-          default: 0,
-          required: true,
-        },
-        zerg: {
-          type: Number,
-          default: 0,
-          required: true,
-        },
-      },
-      topAndBottom: {
-        type: Number,
-        default: 0,
-        required: true,
-      },
-    },
+      type: Object,
+      required: true      
+    }
   },
   components: {
       BaseCircularPercentageChart
@@ -102,16 +82,16 @@ export default defineComponent({
       ${props.winRates.topAndBottom.wins}승`;
 
     const winRateOfProtossTitle = `프로토스전 총
-      ${props.winRates.melee.protoss.games}전 
-      ${props.winRates.melee.protoss.wins}승`;
+      ${props.winRates.melee.P.games}전 
+      ${props.winRates.melee.P.wins}승`;
 
     const winRateOfTerranTitle = `테란전 총
-      ${props.winRates.melee.terran.games}전 
-      ${props.winRates.melee.terran.wins}승`;
+      ${props.winRates.melee.T.games}전 
+      ${props.winRates.melee.T.wins}승`;
 
     const winRateOfZergTitle = `저그전 총
-      ${props.winRates.melee.zerg.games}전 
-      ${props.winRates.melee.zerg.wins}승`;
+      ${props.winRates.melee.Z.games}전 
+      ${props.winRates.melee.Z.wins}승`;
 
     
     
