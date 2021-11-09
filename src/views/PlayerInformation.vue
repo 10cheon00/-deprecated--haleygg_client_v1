@@ -1,40 +1,51 @@
 <template>
-  <div class="layout" v-if="playerInformation.fetched">
+  <div class="layout" v-if="isPlayerInformationFetched">
     <!-- Player Information -->
-    <PlayerProfileCard :profile="playerInformation.profile" />
-    <va-divider />
-    <div class="row justify--center">
-      <!-- Statistics -->
-      <div class="flex xl6 lg6 md12 sm12 xs12" style="height: 100%">
-        <PlayerWinRateCard
-          class="data"
-          :winRates="playerInformation.winningRates"
-        />
-      </div>
-      <div class="flex xl6 lg6 md12 sm12 xs12">
-        <PlayerEloCard hidden class="data" :elo="playerInformation.elo" />
-      </div>
+    <PlayerProfileCard :profile="profile" />
 
-      <!-- Recent games -->
-      <div class="flex lg12 md12 sm12 xs12">
-        <PlayerGameResultListCard
-          class="data"
-          :gameResultList="playerInformation.gameResultList"
-          :you="playerName"
-        />
-      </div>
+    <va-divider/>
+    <!-- League Selector -->
+    <div class="">
+      <LeagueSelector/>
+    </div>
+
+    <!-- Winning Rate -->
+    <div class="flex xl6 lg6 md12 sm12 xs12" style="height: 100%">
+      <PlayerWinRateCard
+        class="data"
+        :winRates="gameResultGroup[currentLeague].aggregatedResult"
+      />
+    </div> 
+
+    <!-- Elo -->
+    <div class="flex xl6 lg6 md12 sm12 xs12">
+      <PlayerEloCard
+        hidden
+        class="data"
+        :elo="elo"
+      />
+    </div>
+
+    <!-- Recent games -->
+    <div class="flex lg12 md12 sm12 xs12">
+      <PlayerGameResultListCard
+        class="data"
+        :gameResultList="gameResultGroup[currentLeague].list"
+        :you="profile.name"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted, defineComponent } from "vue";
+import { ref, onMounted, defineComponent, provide } from "vue";
 import { useRouter } from "vue-router";
 
 import PlayerGameResultListCard from "@/components/PlayerGameResultListCard.vue";
 import PlayerProfileCard from "@/components/PlayerProfileCard.vue";
 import PlayerWinRateCard from "@/components/PlayerWinRateCard.vue";
 import PlayerEloCard from "@/components/PlayerEloCard.vue";
+import LeagueSelector from "@/components/LeagueSelector.vue";
 
 import { fetchPlayerInformationUsingAxios } from "@/plugins/player-information-fetcher.js";
 
@@ -46,85 +57,108 @@ export default defineComponent({
     },
   },
   components: {
-    PlayerGameResultListCard,
     PlayerProfileCard,
+    LeagueSelector,
     PlayerWinRateCard,
     PlayerEloCard,
+    PlayerGameResultListCard,
   },
   setup(props) {
-    const playerInformation = ref({
-      fetched: false,
-      profile: null,
-      gameResultList: [],
-      winningRates: {
-        melee: {
-          total: { games: 0, wins: 0, rate: 0 },
-          P: { games: 0, wins: 0, rate: 0 },
-          T: { games: 0, wins: 0, rate: 0 },
-          Z: { games: 0, wins: 0, rate: 0 },
-        },
-        topAndBottom: { games: 0, wins: 0, rate: 0 },
-      },
-    });
+    let gameResultList = null;
+    const profile = ref(null);
+    const gameResultGroup = ref({});
+    const isPlayerInformationFetched = ref(false);
+    const Elo = ref(null);
+
+    const currentLeague = ref("");
+    const leagueList = ref([]);
+    const selectLeague = (league) => {
+      currentLeague.value = league
+    }
+    provide("leagueList", leagueList);
+    provide("selectLeague", selectLeague);
+
     onMounted(async () => {
       const router = useRouter();
-      playerInformation.value.fetched = false;
+      isPlayerInformationFetched.value = false;
 
       try {
         const response = await fetchPlayerInformationUsingAxios(
           props.playerName
         );
-        playerInformation.value.profile = response.data.profile;
-        playerInformation.value.gameResultList = response.data.game_result_list;
-        playerInformation.value.elo = []; // dummy data
-
-        aggregateGameResultListToWinningRate();
-        calculateWinningRate();
-
-        playerInformation.value.fetched = true;
+        profile.value = response.data.profile;
+        gameResultList = response.data.game_result_list;
+        Elo.value = []; // dummy data
       } catch (error) {
         if (error.response.status == 404) {
           router.push("/PlayerDoesNotExist");
         }
       }
+      
+      groupGameResultListByLeague();
+      aggregateGameResultListToWinningRateByLeague();
+      calculateWinningRateByLeague();
+
+      leagueList.value = Object.keys(gameResultGroup.value);
+      currentLeague.value = leagueList.value[0];
+
+      isPlayerInformationFetched.value = true;
     });
 
-    const aggregateGameResultListToWinningRate = () => {
+    const groupGameResultListByLeague = () => {
+      gameResultList.forEach((gameResult) => {
+        if (gameResult.league in gameResultGroup.value == false) {
+          gameResultGroup.value[gameResult.league] = {
+            list: [],
+            aggregatedResult: {
+              melee: {
+                total: { games: 0, wins: 0, rate: 0 },
+                P: { games: 0, wins: 0, rate: 0 },
+                T: { games: 0, wins: 0, rate: 0 },
+                Z: { games: 0, wins: 0, rate: 0 },
+              },
+              topAndBottom: { games: 0, wins: 0, rate: 0 },
+            },
+          };
+        }
+        gameResultGroup.value[gameResult.league].list.push(gameResult);
+      });
+      gameResultList = null;
+    };
+
+    const aggregateGameResultListToWinningRateByLeague = () => {
       const isPlayerWin = (username, winners) => {
         return winners.some((e) => e["name"] == username);
       };
-
-      playerInformation.value.gameResultList.forEach((gameResult) => {
-        if (gameResult.game_type == "melee") {
-          // presume user loses.
+      for (const key in gameResultGroup.value) {
+        let group = gameResultGroup.value[key];
+        group.list.forEach((gameResult) => {
           let opponentRace = gameResult.winners[0].race;
-          if (isPlayerWin(playerInformation.value.profile.name, gameResult.winners)) {
-            // but user wins, change opponent race.
-            opponentRace = gameResult.losers[0].race;
-            playerInformation.value.winningRates.melee[opponentRace].wins++;
+          if (gameResult.game_type == "melee") {
+            if (isPlayerWin(profile.value.name, gameResult.winners)) {
+              opponentRace = gameResult.losers[0].race;
+              group.aggregatedResult.melee[opponentRace].wins++;
+            }
+            group.aggregatedResult.melee[opponentRace].games++;
+          } else {
+            if (isPlayerWin(profile.value.name, gameResult.winners)) {
+              group.aggregatedResult.topAndBottom.wins++;
+            }
+            group.aggregatedResult.topAndBottom.games++;
           }
-          playerInformation.value.winningRates.melee[opponentRace].games++;
-        } else {
-          // Top and bottom games doesn't count by race.
-          // Does only count win.
-          if (isPlayerWin(playerInformation.value.profile.name, gameResult.winners)) {
-            playerInformation.value.winningRates.topAndBottom.wins++;
-          }
-          playerInformation.value.winningRates.topAndBottom.games++;
-        }
-      });
-      playerInformation.value.winningRates.melee.total.games =
-        playerInformation.value.winningRates.melee.P.games +
-        playerInformation.value.winningRates.melee.T.games +
-        playerInformation.value.winningRates.melee.Z.games;
-
-      playerInformation.value.winningRates.melee.total.wins =
-        playerInformation.value.winningRates.melee.P.wins +
-        playerInformation.value.winningRates.melee.T.wins +
-        playerInformation.value.winningRates.melee.Z.wins;
+        });
+        group.aggregatedResult.melee.total.games =
+          group.aggregatedResult.melee.P.games +
+          group.aggregatedResult.melee.T.games +
+          group.aggregatedResult.melee.Z.games;
+        group.aggregatedResult.melee.total.wins =
+          group.aggregatedResult.melee.P.wins +
+          group.aggregatedResult.melee.T.wins +
+          group.aggregatedResult.melee.Z.wins;
+      }
     };
 
-    const calculateWinningRate = () => {
+    const calculateWinningRateByLeague = () => {
       const calculatePercentage = (obj) => {
         obj.rate = Math.floor((obj.wins / obj.games) * 1000) / 10;
         if (isNaN(obj.rate)) {
@@ -132,26 +166,34 @@ export default defineComponent({
         }
         return obj;
       };
-
-      playerInformation.value.winningRates.melee.total = calculatePercentage(
-        playerInformation.value.winningRates.melee.total
-      );
-      playerInformation.value.winningRates.melee.P = calculatePercentage(
-        playerInformation.value.winningRates.melee.P
-      );
-      playerInformation.value.winningRates.melee.T = calculatePercentage(
-        playerInformation.value.winningRates.melee.T
-      );
-      playerInformation.value.winningRates.melee.Z = calculatePercentage(
-        playerInformation.value.winningRates.melee.Z
-      );
-      playerInformation.value.winningRates.topAndBottom = calculatePercentage(
-        playerInformation.value.winningRates.topAndBottom
-      );
+      for (const key in gameResultGroup.value) {
+        let group = gameResultGroup.value[key];
+        group.aggregatedResult.melee.total = calculatePercentage(
+          group.aggregatedResult.melee.total
+        );
+        group.aggregatedResult.melee.P = calculatePercentage(
+          group.aggregatedResult.melee.P
+        );
+        group.aggregatedResult.melee.T = calculatePercentage(
+          group.aggregatedResult.melee.T
+        );
+        group.aggregatedResult.melee.Z = calculatePercentage(
+          group.aggregatedResult.melee.Z
+        );
+        group.aggregatedResult.topAndBottom = calculatePercentage(
+          group.aggregatedResult.topAndBottom
+        );
+      }
     };
 
+    
+
     return {
-      playerInformation,
+      profile,
+      gameResultGroup,
+      isPlayerInformationFetched,
+      Elo,
+      currentLeague,
     };
   },
 });

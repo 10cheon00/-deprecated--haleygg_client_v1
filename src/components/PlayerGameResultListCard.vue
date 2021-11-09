@@ -1,31 +1,36 @@
 <template>
   <div>
     <va-card>
-      <va-card-title class="user-gameresult">Recent Games</va-card-title>
+      <va-card-title>
+        <div>Recent Games</div>
+      </va-card-title>
       <va-card-content>
-        <div
-          v-for="gameResult in gameResultList"
-          :key="gameResult.id"
-        >
-          <div
-            class="row game-result"
-            :style="gameResult.winStateDecorator"
-          >
+        <!-- Game result list -->
+        <div v-for="gameResult in paginatedGameResultList" :key="gameResult.id">
+          <div class="row game-result" :style="gameResult.winStateDecorator">
             <div class="flex xl4 lg4 md4 sm4">
               <div class="league">
                 {{ gameResult.league }} {{ gameResult.description }}
               </div>
               <div class="date">
                 {{ gameResult.date }}
-                </div>
+              </div>
             </div>
             <div class="flex xl2 lg2 md2 sm2">
               <div v-for="player in gameResult.winners" :key="player.name">
-                <div v-if="player.name == you" class="you">
-                  {{ player.name }} ({{ player.race }})
-                </div>
-                <div v-else class="notYou">
-                  {{ player.name }} ({{ player.race }})
+                <div
+                  :class="{
+                    you: player.name == you,
+                    notYou: player.name != you,
+                  }"
+                >
+                  <router-link
+                    :to="{
+                      path: '/player/' + player.name,
+                    }"
+                  >
+                    {{ player.name }} ({{ player.race }})
+                  </router-link>
                 </div>
               </div>
             </div>
@@ -34,11 +39,15 @@
             </div>
             <div class="flex xl2 lg2 md2 sm2">
               <div v-for="player in gameResult.losers" :key="player.name">
-                <div v-if="player.name == you" class="you">
-                  {{ player.name }} ({{ player.race }})
-                </div>
-                <div v-else class="notYou">
-                  {{ player.name }} ({{ player.race }})
+                <div
+                  :class="{
+                    you: player.name == you,
+                    notYou: player.name != you,
+                  }"
+                >
+                  <router-link :to="{ path: '/player/' + player.name }">
+                    {{ player.name }} ({{ player.race }})
+                  </router-link>
                 </div>
               </div>
             </div>
@@ -65,7 +74,7 @@
 </template>
 
 <script>
-import { ref, computed, defineComponent, onMounted } from "vue";
+import { ref, computed, defineComponent, onUpdated, onMounted } from "vue";
 
 export default defineComponent({
   components: {},
@@ -80,26 +89,14 @@ export default defineComponent({
     },
   },
   setup(props) {
+    onUpdated(() => {
+      decorateGameResult();
+    });
     onMounted(() => {
-      if (props.you != undefined) {
-        const isPlayerWin = (username, winners) => {
-          return winners.some((e) => e["name"] == username);
-        };
-        props.gameResultList.forEach((gameResult) => {
-          if (isPlayerWin(props.you, gameResult.winners)) {
-            gameResult.winStateDecorator = {
-              "border-left": "solid 0.25rem #007bff",
-            };
-          } else {
-            gameResult.winStateDecorator = {
-              "border-left": "solid 0.25rem #dc3545",
-            };
-          }
-        });
-      }
+      decorateGameResult();
     });
 
-    const itemsInPageCount = 10;
+    const itemsInPageCount = 5;
     const pageNumber = ref(1);
     const gameResultListLength = computed(() => {
       return Math.ceil(props.gameResultList.length / itemsInPageCount);
@@ -114,6 +111,27 @@ export default defineComponent({
         return [];
       }
     });
+
+    const decorateGameResult = () => {
+      if (props.you != undefined) {
+        const isPlayerWin = (username, winners) => {
+          return winners.some((e) => e["name"] == username);
+        };
+        props.gameResultList.forEach((gameResult) => {
+          if (isPlayerWin(props.you, gameResult.winners)) {
+            gameResult.winStateDecorator = {
+              "border-left": "solid 0.5rem #007bff",
+              "border-right": "solid 0.5rem #007bff",
+            };
+          } else {
+            gameResult.winStateDecorator = {
+              "border-left": "solid 0.5rem #dc3545",
+              "border-right": "solid 0.5rem #dc3545",
+            };
+          }
+        });
+      }
+    };
 
     return {
       gameResultListLength,
@@ -141,9 +159,11 @@ export default defineComponent({
 
 .game-result .you {
   font-weight: bold;
+  margin: 0.25rem;
 }
 
 .game-result .notYou {
   color: grey;
+  margin: 0.25rem;
 }
 </style>

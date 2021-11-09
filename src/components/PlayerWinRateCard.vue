@@ -1,6 +1,6 @@
 <template>
   <div>
-    <va-card >
+    <va-card>
       <va-card-title>Win Rate</va-card-title>
       <va-card-content>
         <div class="row align--center text--center">
@@ -58,7 +58,7 @@
 
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, onUpdated, ref } from "vue";
 
 import BaseCircularPercentageChart from "@/components/BaseCircularPercentageChart.vue";
 
@@ -66,43 +66,54 @@ export default defineComponent({
   props: {
     winRates: {
       type: Object,
-      required: true      
-    }
+      required: true,
+    },
   },
   components: {
-      BaseCircularPercentageChart
+    BaseCircularPercentageChart,
   },
   setup(props) {
-    const winRateOfMeleeTitle = `개인전 총
+    const winRateOfMeleeTitle = ref("");
+    const winRateOfProtossTitle = ref("");
+    const winRateOfTerranTitle = ref("");
+    const winRateOfZergTitle = ref("");
+    const winRateOfTopAndBottomTitle = ref("");
+
+    const updateWinningRateTitle = () => {
+      winRateOfMeleeTitle.value = `개인전 총
       ${props.winRates.melee.total.games}전 
       ${props.winRates.melee.total.wins}승`;
 
-    const winRateOfTopAndBottomTitle = `팀플전 총
-      ${props.winRates.topAndBottom.games}전 
-      ${props.winRates.topAndBottom.wins}승`;
+      winRateOfTopAndBottomTitle.value = `팀플전 총
+        ${props.winRates.topAndBottom.games}전 
+        ${props.winRates.topAndBottom.wins}승`;
 
-    const winRateOfProtossTitle = `프로토스전 총
-      ${props.winRates.melee.P.games}전 
-      ${props.winRates.melee.P.wins}승`;
+      winRateOfProtossTitle.value = `프로토스전 총
+        ${props.winRates.melee.P.games}전 
+        ${props.winRates.melee.P.wins}승`;
 
-    const winRateOfTerranTitle = `테란전 총
-      ${props.winRates.melee.T.games}전 
-      ${props.winRates.melee.T.wins}승`;
+      winRateOfTerranTitle.value = `테란전 총
+        ${props.winRates.melee.T.games}전 
+        ${props.winRates.melee.T.wins}승`;
 
-    const winRateOfZergTitle = `저그전 총
-      ${props.winRates.melee.Z.games}전 
-      ${props.winRates.melee.Z.wins}승`;
+      winRateOfZergTitle.value = `저그전 총
+        ${props.winRates.melee.Z.games}전 
+        ${props.winRates.melee.Z.wins}승`;
+    };
 
-    
-    
+    updateWinningRateTitle();
+
+    onUpdated(() => {
+      updateWinningRateTitle();
+    });
+
     return {
       winRateOfMeleeTitle,
       winRateOfTopAndBottomTitle,
       winRateOfProtossTitle,
       winRateOfTerranTitle,
       winRateOfZergTitle,
-
-    }
+    };
   },
 });
 </script>

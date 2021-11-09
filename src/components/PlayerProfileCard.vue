@@ -36,11 +36,11 @@ export default defineComponent({
   setup() {
     const loadImageByRace = (race) => {
       const raceImageUrls = {
-        protoss:
+        P:
           "https://bnetcmsus-a.akamaihd.net/cms/gallery/7EKSWN98V7M91498587613057.jpg",
-        terran:
+        T:
           "https://bnetcmsus-a.akamaihd.net/cms/gallery/lt/LTHPT2MPAS8P1502725038501.jpg",
-        zerg: "https://bnetcmsus-a.akamaihd.net/cms/gallery/JHXVBPP04GHH1498587636883.jpg",
+        Z: "https://bnetcmsus-a.akamaihd.net/cms/gallery/JHXVBPP04GHH1498587636883.jpg",
       };
       return raceImageUrls[race];
     };

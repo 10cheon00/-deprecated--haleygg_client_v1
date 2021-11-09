@@ -8,13 +8,30 @@
 
   <!-- Vuestic ui assets -->
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,400;1,700&display=swap"
-    rel="stylesheet">
+  rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
   <link rel="icon" href="<%= BASE_URL %>favicon.ico">
   <title>
     <%= htmlWebpackPlugin.options.title %>
   </title>
+  <style>
+    @font-face {
+      font-family: "S-CoreDream-3Light";
+      src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-3Light.woff")
+        format("woff");
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    a{
+      color: inherit;
+    }
+
+    body{
+      /* font-family: "S-CoreDream-3Light"; */
+    }
+  </style>
 </head>
 <body>
   <noscript>
@@ -24,5 +41,4 @@
   <div id="app"></div>
   <!-- built files will be auto injected -->
 </body>
-
 </html>
