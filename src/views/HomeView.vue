@@ -1,5 +1,5 @@
 <template>
-  <div class="layout">
+  <div>
     <va-card>
       <va-card-content>
         <AppSearchBar />

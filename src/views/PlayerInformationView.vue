@@ -1,5 +1,5 @@
 <template>
-  <div class="layout" v-if="isPlayerInformationFetched">
+  <div v-if="isPlayerInformationFetched" class="">
     <!-- Player Information -->
     <PlayerProfileCard :profile="profile" />
 
@@ -9,30 +9,31 @@
       <LeagueSelector/>
     </div>
 
-    <!-- Winning Rate -->
-    <div class="flex xl6 lg6 md12 sm12 xs12" style="height: 100%">
-      <PlayerWinRateCard
-        class="data"
-        :winRates="gameResultGroup[currentLeague].aggregatedResult"
-      />
-    </div> 
+    <div class="row">
+      <!-- Winning Rate -->
+      <div class="flex xl6 lg6 md12 sm12 xs12" style="height: 100%">
+        <PlayerWinRateCard
+          class="data"
+          :winRates="gameResultGroup[currentLeague].aggregatedResult"
+        />
+      </div> 
 
-    <!-- Elo -->
-    <div class="flex xl6 lg6 md12 sm12 xs12">
-      <PlayerEloCard
-        hidden
-        class="data"
-        :elo="elo"
-      />
-    </div>
+      <!-- Elo -->
+      <div class="flex xl6 lg6 md12 sm12 xs12">
+        <PlayerEloCard
+          class="data"
+          :elo="Elo"
+        />
+      </div>
 
-    <!-- Recent games -->
-    <div class="flex lg12 md12 sm12 xs12">
-      <PlayerGameResultListCard
-        class="data"
-        :gameResultList="gameResultGroup[currentLeague].list"
-        :you="profile.name"
-      />
+      <!-- Recent games -->
+      <div class="flex lg12 md12 sm12 xs12">
+        <PlayerGameResultListCard
+          class="data"
+          :gameResultList="gameResultGroup[currentLeague].list"
+          :you="profile.name"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -83,12 +84,15 @@ export default defineComponent({
       isPlayerInformationFetched.value = false;
 
       try {
-        const response = await fetchPlayerInformationUsingAxios(
-          props.playerName
-        );
-        profile.value = response.data.profile;
+        const response = 
+          await fetchPlayerInformationUsingAxios(props.playerName);
+        profile.value = response.data.player_profile;
         gameResultList = response.data.game_result_list;
-        Elo.value = []; // dummy data
+        Elo.value = [
+          { date: "2021-10-21", value: 1200 },
+          { date: "2021-10-22", value: 1200 },
+          { date: "2021-10-23", value: 1200 }
+        ]; // dummy data
       } catch (error) {
         if (error.response.status == 404) {
           router.push("/PlayerDoesNotExist");
@@ -127,26 +131,38 @@ export default defineComponent({
     };
 
     const aggregateGameResultListToWinningRateByLeague = () => {
-      const isPlayerWin = (username, winners) => {
-        return winners.some((e) => e["name"] == username);
+      let opponentRace = "";
+      const parseOpponentRace = (players, playerName) => {
+        if(players[0].name == playerName){
+          opponentRace = players[1].race;
+        }
+        else{
+          opponentRace = players[0].race;
+        }
+      };
+      const isPlayerWin = (players, playerName) => {
+        return players.some((e) => e["name"] == playerName && e["win_state"]);
       };
       for (const key in gameResultGroup.value) {
         let group = gameResultGroup.value[key];
+        // aggregate each league game result list.
         group.list.forEach((gameResult) => {
-          let opponentRace = gameResult.winners[0].race;
+          // count win, games by game type, races.
+          parseOpponentRace(gameResult.players);
+
           if (gameResult.game_type == "melee") {
-            if (isPlayerWin(profile.value.name, gameResult.winners)) {
-              opponentRace = gameResult.losers[0].race;
+            if (isPlayerWin(gameResult.players, profile.value.name)) {
               group.aggregatedResult.melee[opponentRace].wins++;
             }
             group.aggregatedResult.melee[opponentRace].games++;
           } else {
-            if (isPlayerWin(profile.value.name, gameResult.winners)) {
+            if (isPlayerWin(gameResult.players, profile.value.name)) {
               group.aggregatedResult.topAndBottom.wins++;
             }
             group.aggregatedResult.topAndBottom.games++;
           }
         });
+
         group.aggregatedResult.melee.total.games =
           group.aggregatedResult.melee.P.games +
           group.aggregatedResult.melee.T.games +
@@ -185,8 +201,6 @@ export default defineComponent({
         );
       }
     };
-
-    
 
     return {
       profile,

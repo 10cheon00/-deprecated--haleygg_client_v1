@@ -1,5 +1,5 @@
 <template>
-  <div class="layout">
+  <div>
     <va-card>
       <va-card-title>
         <va-icon name="warning" color="warning" />&nbsp;

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <va-card>
+    <va-card square outlined>
       <va-card-title>Win Rate</va-card-title>
       <va-card-content>
         <div class="row align--center text--center">
