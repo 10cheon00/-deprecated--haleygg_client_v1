@@ -121,6 +121,7 @@ export default defineComponent({
     });
     onUpdated(() => {
       decorateGameResult();
+      splitPlayersToTwoGroup();
     });
 
     const decorateGameResult = () => {

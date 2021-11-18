@@ -1,21 +1,41 @@
 import { axiosInstance } from "@/plugins/axios-wrapper.js";
 
-const fetchPlayerInformationUsingAxios = (playerName) => {
-  return axiosInstance({
-    method: "GET",
-    url: '/player-information/' + playerName,
-  });
-}
-
-const fetchPlayerInformationRelatedWithOpponentUsingAxios = 
-  (playerName, opponentName) => {
-    return axiosInstance({
+const HaleyGGAPI = {
+  axiosInstance: axiosInstance,
+  fetchProfile(playerName) {
+    return this.axiosInstance({
       method: "GET",
-      url: "/player-information/" + playerName + "?versus=" + opponentName
+      url: `/profiles/${playerName}/`
+    });
+  },
+  fetchGameResult(params) {
+    let index = 0;
+    let queryString = "?"
+    for(let key in params){
+      if(index > 0){
+        queryString += "&";
+      }
+      if(key == "league"){
+        const league = params[key];
+        queryString += `league=${league}`;
+      }
+      if(key == "players"){
+        const playerNameList = params[key];
+        queryString += `players=${playerNameList.join()}`;
+      }
+      index++;
+    }
+    return this.axiosInstance({
+      method: "GET",
+      url: `/game-results${queryString}`
+    });
+  },
+  fetchRankOfLeague(leagueName) {
+    return this.axiosInstance({
+      method: "GET",
+      url: `/rank?league=${leagueName}/`
     });
   }
-
-export{
-  fetchPlayerInformationUsingAxios,
-  fetchPlayerInformationRelatedWithOpponentUsingAxios
 }
+
+export default HaleyGGAPI

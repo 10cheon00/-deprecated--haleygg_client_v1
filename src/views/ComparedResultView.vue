@@ -58,7 +58,7 @@
 import { defineComponent, onMounted, ref } from "vue";
 
 import PlayerGameResultListCard from "@/components/PlayerGameResultListCard.vue";
-import { fetchPlayerInformationRelatedWithOpponentUsingAxios } from "@/plugins/player-information-fetcher.js";
+import HaleyGGAPI from "@/plugins/player-information-fetcher.js";
 
 export default defineComponent({
   props: {
@@ -82,12 +82,10 @@ export default defineComponent({
     let superier = [true, false, true];
 
     onMounted(async () => {
-      const response = 
-        await fetchPlayerInformationRelatedWithOpponentUsingAxios(
-          props.playerName,
-          props.opponentName
-        );
-      relatedGameResultList.value = response.data.game_result_list;
+      const response = await HaleyGGAPI.fetchGameResult({
+        players: [props.playerName, props.opponentName]
+      })
+      relatedGameResultList.value = response.data;
 
       isFetched.value = true;
     });
