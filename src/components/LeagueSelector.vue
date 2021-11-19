@@ -1,18 +1,10 @@
 <template>
   <div>
-    <va-tabs v-model="currentLeague">
-      <template #tabs>
-        <va-tab
-          v-for="league in leagueList"
-          :key="league"
-          :name="league"
-          @click="selectLeague(league)"
-        >
-          {{ league }}
-        </va-tab>
-      </template>
-    </va-tabs>
-
+    <va-select
+      v-model="currentLeague"
+      :options="options"
+      @update:model-value="selectLeague(currentLeague)"
+    />
   </div>
 </template>
 
@@ -24,10 +16,11 @@ export default defineComponent({
     const leagueList = inject("leagueList");
     const selectLeague = inject("selectLeague")
     const currentLeague = ref(leagueList.value[0]);
+    const options = ref(leagueList);
     return {
+      currentLeague,
+      options,
       selectLeague,
-      leagueList,
-      currentLeague
     };
   },
 });

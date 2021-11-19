@@ -33,9 +33,15 @@ const HaleyGGAPI = {
   fetchRankOfLeague(leagueName) {
     return this.axiosInstance({
       method: "GET",
-      url: `/rank?league=${leagueName}/`
+      url: `/rank?league=${leagueName}`
     });
-  }
+  },
+  fetchLeagueList() {
+    return this.axiosInstance({
+      method: "GET",
+      url: `/leagues/`
+    });
+  },
 }
 
 export default HaleyGGAPI

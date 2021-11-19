@@ -3,7 +3,7 @@
     <va-card square outlined>
       <va-card-title>Elo Chart</va-card-title>
       <va-card-content>
-        <LineChart :chartData="testData" :options="options" />
+        <LineChart :chartData="eloData" :options="options" />
       </va-card-content>
     </va-card>
   </div>
@@ -24,7 +24,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const testData = {
+    const eloData = {
       datasets: [
         {
           data: props.elo,
@@ -47,7 +47,7 @@ export default defineComponent({
     };
 
     return {
-      testData,
+      eloData,
       options,
     };
   },

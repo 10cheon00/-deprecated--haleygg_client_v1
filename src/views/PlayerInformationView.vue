@@ -5,18 +5,17 @@
 
     <va-divider/>
     <!-- League Selector -->
-    <!--
     <div class="">
       <LeagueSelector/>
     </div>
-     -->
 
     <div class="row">
       <!-- Winning Rate -->
-      <div class="flex xl8 lg8 md12 sm12 xs12" style="height: 100%">
+      <div class="flex xl8 lg8 md12 sm12 xs12">
         <PlayerWinRateCard
           class="data"
-          :winRates="aggregatedResult"
+          :aggregatedResult="aggregatedResult"
+          :rank="rank"
         />
       </div> 
 
@@ -41,14 +40,14 @@
 </template>
 
 <script>
-import { ref, onMounted, defineComponent } from "vue";
+import { ref, onMounted, defineComponent, provide } from "vue";
 import { useRouter } from "vue-router";
 
 import PlayerGameResultListCard from "@/components/PlayerGameResultListCard.vue";
 import PlayerProfileCard from "@/components/PlayerProfileCard.vue";
 import PlayerWinRateCard from "@/components/PlayerWinRateCard.vue";
 import PlayerEloCard from "@/components/PlayerEloCard.vue";
-// import LeagueSelector from "@/components/LeagueSelector.vue";
+import LeagueSelector from "@/components/LeagueSelector.vue";
 
 import HaleyGGAPI from "@/plugins/player-information-fetcher.js";
 
@@ -61,7 +60,7 @@ export default defineComponent({
   },
   components: {
     PlayerProfileCard,
-    // LeagueSelector,
+    LeagueSelector,
     PlayerWinRateCard,
     PlayerEloCard,
     PlayerGameResultListCard,
@@ -74,76 +73,120 @@ export default defineComponent({
     const rank = ref(null);
     const Elo = ref(null);
 
-    // const currentLeague = ref("");
-    // const leagueList = ref([]);
-    // const selectLeague = (league) => {
-    //   currentLeague.value = league
-    // }
-    // provide("leagueList", leagueList);
-    // provide("selectLeague", selectLeague);
-
-    onMounted(async () => {
-      const router = useRouter();
-      isPlayerInformationFetched.value = false;
-
-      try {
-        const responseOfProfile = await HaleyGGAPI.fetchProfile(props.playerName);
-        const responseOfGameResultList = 
-          await HaleyGGAPI.fetchGameResult({
-            'league': 'HPL 1',
-            'players': [props.playerName]
-          })
-        const responseOfRank = await HaleyGGAPI.fetchRankOfLeague("HPL 1");
-        profile.value = responseOfProfile.data;
-        gameResultList.value = responseOfGameResultList.data;
-        rank.value = responseOfRank.data;
-    
-        Elo.value = [
-          { date: "2021-10-21", value: 1200 },
-          { date: "2021-10-22", value: 1200 },
-          { date: "2021-10-23", value: 1200 }
-        ]; // dummy data
-
-        aggregatedResult.value = {
-          melee: {
-            total: { games: 0, wins: 0, rate: 0 },
-            P: { games: 0, wins: 0, rate: 0 },
-            T: { games: 0, wins: 0, rate: 0 },
-            Z: { games: 0, wins: 0, rate: 0 },
-          },
-          topAndBottom: { games: 0, wins: 0, rate: 0 },
-        }
-      } catch (error) {
-        console.log(error)
+    const currentLeague = ref("");
+    const leagueList = ref([]);
+    const selectLeague = async (league) => {
+      currentLeague.value = league;
+      try{
+        await fetchGameResultList();
+        await fetchRank();
+      } catch(error){
+        console.log(error);
         if (error.response.status == 404) {
+          const router = useRouter();
           router.push("/PlayerDoesNotExist");
         }
       }
+
       aggregateGameResultListToWinningRate();
       calculateWinningRate();
+      findPlayerRank();
+    };
+    provide("leagueList", leagueList);
+    provide("selectLeague", selectLeague);
+
+    onMounted(async () => {
+      isPlayerInformationFetched.value = false;
+
+      try {
+        await fetchProfile();
+        await fetchLeagueList();
+        await fetchGameResultList();
+        await fetchRank();
+        fetchElo();
+      } catch (error) {
+        console.log(error);
+        if (error.response.status == 404) {
+          const router = useRouter();
+          router.push("/PlayerDoesNotExist");
+        }
+      }
+
+      aggregateGameResultListToWinningRate();
+      calculateWinningRate();
+      findPlayerRank();
 
       isPlayerInformationFetched.value = true;
     });
 
+    const fetchProfile = async () => {
+      const responseOfProfile = 
+        await HaleyGGAPI.fetchProfile(props.playerName);
+      profile.value = responseOfProfile.data;
+    };
+
+    const fetchLeagueList = async () => {
+      const responseOfLeagueList = 
+        await HaleyGGAPI.fetchLeagueList();
+      responseOfLeagueList.data.forEach(league => {
+        leagueList.value.push(league.name);
+      });
+      currentLeague.value = leagueList.value[0];
+    };
+
+    const fetchGameResultList = async () => {
+      const responseOfGameResultList = 
+        await HaleyGGAPI.fetchGameResult({
+          'league': currentLeague.value,
+          'players': [props.playerName]
+        });
+      gameResultList.value = responseOfGameResultList.data;
+    };
+
+    const fetchRank = async () => {
+      const responseOfRank = 
+        await HaleyGGAPI.fetchRankOfLeague(currentLeague.value);
+      rank.value = responseOfRank.data;
+    };
+
+    const fetchElo = async () => {
+      Elo.value = [
+        { date: "2021-10-21", value: 1200 },
+        { date: "2021-10-22", value: 1200 },
+        { date: "2021-10-23", value: 1200 }
+      ]; // dummy data
+    };
+
     const aggregateGameResultListToWinningRate = () => {
+      aggregatedResult.value = {
+        melee: {
+          total: { games: 0, wins: 0, rate: 0 },
+          P: { games: 0, wins: 0, rate: 0 },
+          T: { games: 0, wins: 0, rate: 0 },
+          Z: { games: 0, wins: 0, rate: 0 },
+        },
+        topAndBottom: { games: 0, wins: 0, rate: 0 },
+      }
+
+
       let opponentRace = "";
-      const findOpponentRace = (players, playerName) => {
-        if(players[0].name == playerName){
+      const findOpponentRace = (players) => {
+        if(players[0].name == profile.value.name){
           opponentRace = players[1].race;
         }
         else{
           opponentRace = players[0].race;
         }
       };
-      const isPlayerWin = (players, playerName) => {
-        return players.some((e) => e["name"] == playerName && e["win_state"]);
+      const isPlayerWin = (players) => {
+        return players.some((e) => e["name"] == profile.value.name && e["win_state"]);
       };
       gameResultList.value.forEach(gameResult => {
         // count win, games by game type, races.
         findOpponentRace(gameResult.players);
 
         if (gameResult.game_type == "melee") {
-          if (isPlayerWin(gameResult.players, profile.value.name)) {
+          if (isPlayerWin(gameResult.players)) {
             aggregatedResult.value.melee[opponentRace].wins++;
           }
           aggregatedResult.value.melee[opponentRace].games++;
@@ -190,13 +233,19 @@ export default defineComponent({
       );
     };
 
+    const findPlayerRank = () => {
+      rank.value = rank.value.find(
+        player_rank => player_rank["player_name"] == profile.value.name
+      );
+    }
+
     return {
       profile,
       gameResultList,
       aggregatedResult,
+      rank,
       isPlayerInformationFetched,
       Elo,
-      // currentLeague,
     };
   },
 });

@@ -20,11 +20,12 @@
 
             <!-- player A -->
             <div class="flex xl3 lg3 md3 sm3 ">
-              <div class="player-a" v-for="player in gameResult.playerA" :key="player.name">
+              <div v-for="player in gameResult.playerA" :key="player.name">
                 <div
                   :class="{
                     'you': player.name == you,
                     'not-you': player.name != you,
+                    'player-a': true
                   }"
                 >
                   <router-link :to="{path: '/player/' + player.name,}">
@@ -44,11 +45,12 @@
 
             <!-- player B -->
             <div class="flex xl3 lg3 md3 sm3">
-              <div class="player-b" v-for="player in gameResult.playerB" :key="player.name">
+              <div v-for="player in gameResult.playerB" :key="player.name">
                 <div
                   :class="{
                     'you': player.name == you,
                     'not-you': player.name != you,
+                    'player-b': true
                   }"
                 >
                   <va-badge v-if="player.win_state" text="W" color="primary"/>
@@ -194,12 +196,14 @@ export default defineComponent({
   margin: 0.25rem;
 }
 
-.game-result .player-a {
+.player-a {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
 }
-.game-result .player-b {
+.player-b {
   display: flex;
   justify-content: flex-start;
+  align-items: center;
 }
 </style>
