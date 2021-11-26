@@ -8,7 +8,7 @@
         v-model="playerName"
       >
         <template #appendInner>
-          <va-icon name="search" @click="searchPlayer()" />
+          <va-icon name="search"/>
         </template>
       </va-input>
     </form>

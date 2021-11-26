@@ -1,6 +1,6 @@
 <template>
   <div>
-    <va-card square outlined>
+    <va-card square outlined stripe>
       <va-card-title>
         <div>Recent Games</div>
       </va-card-title>
@@ -19,21 +19,21 @@
             </div>
 
             <!-- player A -->
-            <div class="flex xl3 lg3 md3 sm3 ">
+            <div class="flex xl2 lg2 md2 sm2">
               <div v-for="player in gameResult.playerA" :key="player.name">
                 <div
                   :class="{
-                    'you': player.name == you,
+                    you: player.name == you,
                     'not-you': player.name != you,
-                    'player-a': true
+                    'player-a': true,
                   }"
                 >
-                  <router-link :to="{path: '/player/' + player.name,}">
+                  <router-link :to="{ path: '/player/' + player.name }">
                     {{ player.name }} ({{ player.race }})
                   </router-link>
                   &nbsp;
-                  <va-badge v-if="player.win_state" text="W" color="primary"/>
-                  <va-badge v-else text="L" color="danger"/>
+                  <va-badge v-if="player.win_state" text="W" color="primary" />
+                  <va-badge v-else text="L" color="danger" />
                 </div>
               </div>
             </div>
@@ -44,17 +44,17 @@
             </div>
 
             <!-- player B -->
-            <div class="flex xl3 lg3 md3 sm3">
+            <div class="flex xl2 lg2 md2 sm2">
               <div v-for="player in gameResult.playerB" :key="player.name">
                 <div
                   :class="{
-                    'you': player.name == you,
+                    you: player.name == you,
                     'not-you': player.name != you,
-                    'player-b': true
+                    'player-b': true,
                   }"
                 >
-                  <va-badge v-if="player.win_state" text="W" color="primary"/>
-                  <va-badge v-else text="L" color="danger"/>&nbsp;
+                  <va-badge v-if="player.win_state" text="W" color="primary" />
+                  <va-badge v-else text="L" color="danger" />&nbsp;
                   <router-link :to="{ path: '/player/' + player.name }">
                     {{ player.name }} ({{ player.race }})
                   </router-link>
@@ -63,7 +63,7 @@
             </div>
 
             <!-- remarks -->
-            <div class="flex xl1 lg1 md1 sm1">
+            <div class="flex xl3 lg3 md3 sm3">
               {{ gameResult.remarks }}
             </div>
           </div>
@@ -152,15 +152,15 @@ export default defineComponent({
         gameResult.playerA = [];
         gameResult.playerB = [];
         gameResult.players.forEach((player, index) => {
-          if(index%2 == 0){ //even
+          if (index % 2 == 0) {
+            //even
             gameResult.playerA.push(player);
-          }
-          else{
+          } else {
             gameResult.playerB.push(player);
           }
         });
       });
-    }
+    };
 
     return {
       gameResultListLength,

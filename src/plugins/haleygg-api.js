@@ -2,6 +2,34 @@ import { axiosInstance } from "@/plugins/axios-wrapper.js";
 
 const HaleyGGAPI = {
   axiosInstance: axiosInstance,
+  parseParams(params=undefined) {
+    if(params == undefined){
+      return "";
+    }
+    let index = 0;
+    let queryString = "?"
+    for(let key in params){
+      if(index > 0){
+        queryString += "&";
+      }
+      if(key == "players"){
+        const playerNameList = params[key];
+        queryString += `players=${playerNameList.join()}`;
+      }
+      else{
+        const value = params[key]
+        queryString += `${key}=${value}`;
+      }
+      index++;
+    }
+    return queryString;
+  },
+  fetchProfileList() {
+    return this.axiosInstance({
+      method: "GET",
+      url: `/profiles/`
+    });
+  },
   fetchProfile(playerName) {
     return this.axiosInstance({
       method: "GET",
@@ -9,31 +37,17 @@ const HaleyGGAPI = {
     });
   },
   fetchGameResult(params) {
-    let index = 0;
-    let queryString = "?"
-    for(let key in params){
-      if(index > 0){
-        queryString += "&";
-      }
-      if(key == "league"){
-        const league = params[key];
-        queryString += `league=${league}`;
-      }
-      if(key == "players"){
-        const playerNameList = params[key];
-        queryString += `players=${playerNameList.join()}`;
-      }
-      index++;
-    }
+    const queryString = this.parseParams(params)
     return this.axiosInstance({
       method: "GET",
       url: `/game-results${queryString}`
     });
   },
-  fetchRankOfLeague(leagueName) {
+  fetchStatistics(params) {
+    const queryString = this.parseParams(params);
     return this.axiosInstance({
       method: "GET",
-      url: `/rank?league=${leagueName}`
+      url: `/statistics${queryString}`
     });
   },
   fetchLeagueList() {

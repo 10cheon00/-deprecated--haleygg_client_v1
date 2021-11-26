@@ -3,6 +3,7 @@
     <va-select
       v-model="currentLeague"
       :options="options"
+      label="League"
       @update:model-value="selectLeague(currentLeague)"
     />
   </div>

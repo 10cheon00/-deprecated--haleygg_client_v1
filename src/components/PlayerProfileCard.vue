@@ -53,6 +53,9 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.va-card__title{
+  background-color: rgba(0,0,0,0);
+}
 .player-information {
   background-repeat: no-repeat;
   background-size: 100%;

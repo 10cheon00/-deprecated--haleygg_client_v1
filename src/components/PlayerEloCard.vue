@@ -1,9 +1,9 @@
 <template>
   <div>
-    <va-card square outlined>
+    <va-card square outlined stripe>
       <va-card-title>Elo Chart</va-card-title>
       <va-card-content>
-        <LineChart :chartData="eloData" :options="options" />
+        <LineChart :chartData="eloData" :options="options" style="min-height:330px; max-height:330px;"/>
       </va-card-content>
     </va-card>
   </div>

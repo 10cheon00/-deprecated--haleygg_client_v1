@@ -1,231 +1,256 @@
 <template>
-  <div>
-    <va-card square outlined>
-      <va-card-title>Win Rate</va-card-title>
-      <va-card-content>
-        <div class="row">
-          <div class="flex xl4 lg4 md4 sm6 xs6">
-            <table style="width:100%; height:100%">
-              <colgroup>
-                <col width=30%/>
-                <col width=70%/>
-              </colgroup>
-              <tbody>
-                <tr v-for="row in rankSheet" :key="row.title">
-                  <th>{{ row.title }}</th>
-                  <td>
-                    <div class="sheet-data">
-                      <va-badge text="G" color="primary"/>
-                      <span>&nbsp;{{ row.value.games }}&nbsp;</span>
-                      <va-badge text="W" color="success"/>
-                      <span>&nbsp;{{ row.value.wins }}&nbsp;</span>
-                      <va-badge v-if="row.value.rank == 1"
-                        text="1st" color="#FFD700"
-                      />
-                      <va-badge v-else-if="row.value.rank == 2"
-                        text="2nd" color="#C0C0C0"
-                      />
-                      <va-badge v-else-if="row.value.rank == 3"
-                        text="3rd" color="#CD7F32"
-                      />
-                      <va-badge v-else
-                        :text="`${row.value.rank}th`" color="#000000"
-                      />
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+  <div class="row">
+    <div class="flex md12 win-rate">
+      <va-card square outlined stripe>
+        <va-card-title>Total Win Rate</va-card-title>
+        <va-card-content>
+          <div class="row">
+            <div class="flex md6 justify--center align--middle">
+              <div>개인</div>
+              <div>50%</div>
+            </div>
+            <div class="flex md6">
+            </div>
           </div>
-          <div class="flex xl8 lg8 md8 sm6 xs6">
-            <BarChart 
-              v-if="rankChartData"
-              :chartData="rankChartData" 
-              :options="options" 
-              :plugins="plugins" 
-              :height="309"
-            />
+        </va-card-content>
+      </va-card>
+    </div>
+    <div class="flex md12">
+      <va-card square outlined stripe>
+        <va-card-title>League Statistics</va-card-title>
+        <va-card-content>
+          <va-divider />
+          <div v-for="statistic in statistics" :key="statistic.title">
+            <div class="statistics">
+              <span class="statistic-title">
+                {{ statistic.title }}
+              </span>
+              <span class="statistic-value">
+                {{ statistic.value }}
+              </span>
+            </div>
+            <va-divider />
           </div>
-        </div>
-      </va-card-content>
-    </va-card>
+        </va-card-content>
+      </va-card>
+    </div>
   </div>
 </template>
 
 <script>
-
-import { defineComponent, onMounted, onUpdated, ref } from "vue";
-import { BarChart } from "vue-chart-3";
-import ChartDataLabels from "chartjs-plugin-datalabels";
-
-import getCustomVuesticConfig from "@/plugins/custom-vuestic-config.js";
+import { defineComponent, onMounted, ref } from "vue";
 
 export default defineComponent({
   props: {
-    aggregatedResult: {
+    rawStatistics: {
       type: Object,
       required: true,
     },
-    rank: {
-      type: Object,
-      required: true
-    }
   },
-  components: {
-    BarChart,
-  },
+  components: {},
   setup(props) {
-    const rankChartData = ref(null);
-    const rankData = ref(null);
-    const options = ref(null);
-    const plugins = [
-      ChartDataLabels
-    ];
-    const rankSheet = ref(null);
+    const statistics = ref(null);
+
+    const calculateStatistics = () => {
+      statistics.value = props.rawStatistics;
+      
+      calculateMeleeStatistics();
+      calculateTopAndBottomStatistics();
+      calculateProtossStatistics();
+      calculateTerranStatistics();
+      calculateZergStatistics();
+    }
+
+    const calculateMeleeStatistics = () => {
+      statistics.value.melee_lose_count = statistics.value.melee_game_count - statistics.value.melee_win_count;
+      statistics.value.melee_winning_rate = calculatePercentageWithWinAndLose(
+        statistics.value.melee_win_count, statistics.value.melee_game_count);
+    }
+
+    const calculateTopAndBottomStatistics = () => {
+      statistics.value.top_and_bottom_lose_count = statistics.value.top_and_bottom_game_count - statistics.value.top_and_bottom_win_count;
+      statistics.value.top_and_bottom_winning_rate = calculatePercentageWithWinAndLose(
+        statistics.value.top_and_bottom_win_count, statistics.value.top_and_bottom_game_count)
+    }
+
+    const calculateProtossStatistics = () => {
+      statistics.value.pvp_lose_count = statistics.value.pvp_game_count - statistics.value.pvp_win_count;
+      statistics.value.pvt_lose_count = statistics.value.pvt_game_count - statistics.value.pvt_win_count;
+      statistics.value.pvz_lose_count = statistics.value.pvz_game_count - statistics.value.pvz_win_count;
+      
+      statistics.value.protoss_total_win_count = 
+        statistics.value.pvp_win_count +
+        statistics.value.pvt_win_count +
+        statistics.value.pvz_win_count;
+
+      statistics.value.protoss_total_lose_count = 
+        statistics.value.pvp_lose_count +
+        statistics.value.pvt_lose_count +
+        statistics.value.pvz_lose_count;
+
+      statistics.value.protoss_total_game_count = 
+        statistics.value.protoss_total_lose_count +
+        statistics.value.protoss_total_win_count;
+      
+      statistics.value.pvp_winning_rate = calculatePercentageWithWinAndLose(
+        statistics.value.pvp_win_count, 
+        statistics.value.pvp_game_count);
+      statistics.value.pvt_winning_rate = calculatePercentageWithWinAndLose(
+        statistics.value.pvt_win_count, 
+        statistics.value.pvt_game_count);
+      statistics.value.pvz_winning_rate = calculatePercentageWithWinAndLose(
+        statistics.value.pvz_win_count, 
+        statistics.value.pvz_game_count);
+      statistics.value.protoss_total_winning_rate = 
+        calculatePercentageWithWinAndLose(
+          statistics.value.protoss_total_win_count, 
+          statistics.value.protoss_total_game_count);
+    }
+
+    const calculateTerranStatistics = () => {
+      statistics.value.tvp_lose_count = statistics.value.tvp_game_count - statistics.value.tvp_win_count;
+      statistics.value.tvt_lose_count = statistics.value.tvt_game_count - statistics.value.tvt_win_count;
+      statistics.value.tvz_lose_count = statistics.value.tvz_game_count - statistics.value.tvz_win_count;
+      
+      statistics.value.terran_total_win_count = 
+        statistics.value.tvp_win_count +
+        statistics.value.tvt_win_count +
+        statistics.value.tvz_win_count;
+
+      statistics.value.terran_total_lose_count = 
+        statistics.value.tvp_lose_count +
+        statistics.value.tvt_lose_count +
+        statistics.value.tvz_lose_count;
+
+      statistics.value.terran_total_game_count = 
+        statistics.value.terran_total_lose_count +
+        statistics.value.terran_total_win_count;
+        
+      statistics.value.tvp_winning_rate = calculatePercentageWithWinAndLose(
+        statistics.value.tvp_win_count,
+        statistics.value.tvp_game_count);
+      statistics.value.tvt_winning_rate = calculatePercentageWithWinAndLose(
+        statistics.value.tvt_win_count,
+        statistics.value.tvt_game_count);
+      statistics.value.tvz_winning_rate = calculatePercentageWithWinAndLose(
+        statistics.value.tvz_win_count,
+        statistics.value.tvz_game_count);
+        
+      statistics.value.terran_total_winning_rate = 
+        calculatePercentageWithWinAndLose(
+          statistics.value.terran_total_win_count, 
+          statistics.value.terran_total_game_count);
+
+    }
+
+    const calculateZergStatistics = () => {
+      statistics.value.zvp_lose_count = statistics.value.zvp_game_count - statistics.value.zvp_win_count;
+      statistics.value.zvt_lose_count = statistics.value.zvt_game_count - statistics.value.zvt_win_count;
+      statistics.value.zvz_lose_count = statistics.value.zvz_game_count - statistics.value.zvz_win_count;
+      
+      statistics.value.zerg_total_win_count = 
+        statistics.value.zvp_win_count +
+        statistics.value.zvt_win_count +
+        statistics.value.zvz_win_count;
+
+      statistics.value.zerg_total_lose_count = 
+        statistics.value.zvp_lose_count +
+        statistics.value.zvt_lose_count +
+        statistics.value.zvz_lose_count;
+
+      statistics.value.zerg_total_game_count = 
+        statistics.value.zerg_total_lose_count +
+        statistics.value.zerg_total_win_count;
+        
+      statistics.value.zvp_winning_rate = calculatePercentageWithWinAndLose(
+        statistics.value.zvp_win_count,
+        statistics.value.zvp_game_count);
+      statistics.value.zvt_winning_rate = calculatePercentageWithWinAndLose(
+        statistics.value.zvt_win_count,
+        statistics.value.zvt_game_count);
+      statistics.value.zvz_winning_rate = calculatePercentageWithWinAndLose(
+        statistics.value.zvz_win_count,
+        statistics.value.zvz_game_count);
+    
+      statistics.value.zerg_total_winning_rate = 
+        calculatePercentageWithWinAndLose(
+          statistics.value.zerg_total_win_count, 
+          statistics.value.zerg_total_game_count);
+    }
+    
+    const calculatePercentageWithWinAndLose = (wins, games) => {
+      const result = Math.floor((wins / games) * 1000) / 10;
+      if (isNaN(result)) {
+        return 0;
+      }
+      return result;
+    };
+
+    const combineStatisticsToString = () => {
+      const result = [];
+      result.push({
+        title: `개인`,
+        value: `
+          ${statistics.value.melee_win_count}승
+          ${statistics.value.melee_lose_count}패`
+      });
+
+      result.push({
+        title: `팀플`,
+        value: `
+          ${statistics.value.top_and_bottom_win_count}승
+          ${statistics.value.top_and_bottom_lose_count}패`
+      });
+
+      result.push({
+        title: `프로토스 승률`,
+        value: `
+        ${statistics.value.protoss_total_winning_rate}%,
+        ${statistics.value.protoss_total_win_count}승 
+        ${statistics.value.protoss_total_lose_count}패`
+      });
+
+      result.push({
+        title: `테란 승률`,
+        value: `
+        ${statistics.value.terran_total_winning_rate}%,
+        ${statistics.value.terran_total_win_count}승 
+        ${statistics.value.terran_total_lose_count}패`
+      });
+
+      result.push({
+        title: `저그 승률`,
+        value: `
+        ${statistics.value.zerg_total_winning_rate}%,
+        ${statistics.value.zerg_total_win_count}승 
+        ${statistics.value.zerg_total_lose_count}패`
+      });
+
+
+      statistics.value = result;
+    }
 
     onMounted(() => {
-      parseWinRate();
-      initializeChart();
+      calculateStatistics();
+      combineStatisticsToString();
     });
 
-    onUpdated(() => {
-      parseWinRate();
-      initializeChart();
-    });
-     
-    const parseWinRate = () => {
-      rankData.value = [];
-      rankData.value.push(
-        { name: "개인전", value : props.aggregatedResult.melee.total.rate },
-        { name: "팀전", value : props.aggregatedResult.topAndBottom.rate },
-        { name: "vs P", value : props.aggregatedResult.melee.P.rate },
-        { name: "vs T", value : props.aggregatedResult.melee.T.rate },
-        { name: "vs Z", value : props.aggregatedResult.melee.Z.rate }
-      )
-      rankSheet.value = [];
-      rankSheet.value.push(
-        { 
-          title: "개인전",
-          value: {
-            games: props.aggregatedResult.melee.total.games,
-            wins: props.aggregatedResult.melee.total.wins,
-            rank: props.rank.melee_win_count_rank
-          }
-        },
-        {
-          title: "팀전",
-          value: {
-            games: props.aggregatedResult.topAndBottom.games,
-            wins: props.aggregatedResult.topAndBottom.wins,
-            rank: props.rank.top_and_bottom_win_count_rank
-          }
-        },
-        {
-          title: "vs P",
-          value: {
-            games: props.aggregatedResult.melee.P.games,
-            wins: props.aggregatedResult.melee.P.wins,
-            rank: props.rank.versus_protoss_win_count_rank
-          }
-        },
-        {
-          title: "vs T",
-          value: {
-            games: props.aggregatedResult.melee.T.games,
-            wins: props.aggregatedResult.melee.T.wins,
-            rank: props.rank.versus_terran_win_count_rank
-          }
-        },
-        {
-          title: "vs Z",
-          value: {
-            games: props.aggregatedResult.melee.Z.games,
-            wins: props.aggregatedResult.melee.Z.wins,
-            rank: props.rank.versus_zerg_win_count_rank
-          }
-        },
-      );
-    };
-
-    const initializeChart = () => {
-      const config = getCustomVuesticConfig();
-      rankChartData.value = {
-        datasets: [{
-          data: rankData.value,
-          backgroundColor: [
-            config.colors.success,
-            config.colors.info,
-            config.colors.protoss,
-            config.colors.terran,
-            config.colors.zerg
-          ]
-        }]
-      };
-      options.value = {
-        animation: false,
-        borderColor: "#babfc2",
-        indexAxis: "y",
-        layout: {
-          padding: {
-            right: 50,
-          }
-        },
-        parsing: {
-          xAxisKey: "value",
-          yAxisKey: "name"
-        },
-        plugins: {
-          datalabels: {
-            align: "end",
-            anchor: "end",
-            clamp: true,
-            display: "auto",
-            formatter(data) {
-              return `${data.value}%`;
-            },
-            offset: 4
-          },
-          legend: {
-            display: false
-          }
-        },
-        scales: {
-          x: {
-            min: 0,
-            max: 100
-          }
-        }
-      };
-    };
-    
     return {
-      rankChartData,
-      options,
-      plugins,
-      rankSheet
+      statistics
     };
   },
 });
 </script>
 
 <style scoped>
-th, td {
-  vertical-align: middle;
+.win-rate{
+  margin-bottom: 0.5rem;
 }
-th {
-  text-align: center;
-  background-color: darkgrey;
-  color: white;
-}
-td {
-  padding: 0.5rem;
-}
-tbody, td, th {
-  border: solid 1px lightgray;
-}
-.sheet-data {
+.statistics{
   display: flex;
-  justify-content: flex-start;
-  align-items: center;
+  justify-content: space-between;
+}
+.statistic-value{
+  font-weight: bold;
 }
 </style>
