@@ -6,7 +6,7 @@
       </va-card-title>
       <va-card-content>
         <!-- Game result list -->
-        <div v-for="gameResult in paginatedGameResultList" :key="gameResult.id">
+        <div v-for="gameResult in gameResultList" :key="gameResult.id">
           <div class="row game-result" :style="gameResult.winStateDecorator">
             <!-- date, league, description -->
             <div class="flex xl3 lg3 md3 sm3">
@@ -70,23 +70,13 @@
         </div>
 
         <va-divider />
-        <!-- Paginator -->
-        <div class="row justify--center">
-          <va-pagination
-            flat
-            size="small"
-            v-model="pageNumber"
-            :pages="gameResultListLength"
-            :visible-pages="5"
-          />
-        </div>
       </va-card-content>
     </va-card>
   </div>
 </template>
 
 <script>
-import { ref, computed, defineComponent, onUpdated, onMounted } from "vue";
+import { defineComponent, onUpdated, onMounted } from "vue";
 
 export default defineComponent({
   components: {},
@@ -101,22 +91,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const itemsInPageCount = 5;
-    const pageNumber = ref(1);
-    const gameResultListLength = computed(() => {
-      return Math.ceil(props.gameResultList.length / itemsInPageCount);
-    });
-    const paginatedGameResultList = computed(() => {
-      if (Array.isArray(props.gameResultList)) {
-        return props.gameResultList.slice(
-          itemsInPageCount * pageNumber.value - itemsInPageCount,
-          itemsInPageCount * pageNumber.value
-        );
-      } else {
-        return [];
-      }
-    });
-
     onMounted(() => {
       decorateGameResult();
       splitPlayersToTwoGroup();
@@ -163,9 +137,6 @@ export default defineComponent({
     };
 
     return {
-      gameResultListLength,
-      paginatedGameResultList,
-      pageNumber,
     };
   },
 });

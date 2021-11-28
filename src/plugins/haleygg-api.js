@@ -50,6 +50,13 @@ const HaleyGGAPI = {
       url: `/statistics${queryString}`
     });
   },
+  fetchRanking(params) {
+    const queryString = this.parseParams(params);
+    return this.axiosInstance({
+      method: "GET",
+      url: `/ranking${queryString}`
+    });
+  },
   fetchLeagueList() {
     return this.axiosInstance({
       method: "GET",

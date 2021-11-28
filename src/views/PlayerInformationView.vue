@@ -4,17 +4,14 @@
     <PlayerProfileCard :profile="playerInformation.profile" />
 
     <va-divider/>
-    <!-- League Selector -->
-    <div class="row justify--end">
-      <LeagueSelector/>
-    </div>
 
     <div class="row">
       <!-- Winning Rate -->
       <div class="flex xl4 lg4 md12 sm12 xs12">
-        <PlayerWinRateCard
+        <PlayerStatisticsCard
           class="data"
           :rawStatistics="playerInformation.statistics"
+          :ranking="playerInformation.ranking"
         />
       </div> 
 
@@ -44,9 +41,8 @@ import { useRouter } from "vue-router";
 
 import PlayerGameResultListCard from "@/components/PlayerGameResultListCard.vue";
 import PlayerProfileCard from "@/components/PlayerProfileCard.vue";
-import PlayerWinRateCard from "@/components/PlayerWinRateCard.vue";
+import PlayerStatisticsCard from "@/components/PlayerStatisticsCard.vue";
 import PlayerEloCard from "@/components/PlayerEloCard.vue";
-import LeagueSelector from "@/components/LeagueSelector.vue";
 
 import HaleyGGAPI from "@/plugins/haleygg-api.js";
 
@@ -60,12 +56,7 @@ export default defineComponent({
   },
   components: {
     PlayerProfileCard,
-    LeagueSelector,
-    PlayerWinRateCard,
-    // TODO
-    // aggregator를 이용해 만든 데이터를 어떻게 활용할 것인지, 
-    // BaseCircularChart를 개조해 종족별 승률을 표시할 것.
-    // 막대그래프 쳐내고 숫자로만 표시할 것.
+    PlayerStatisticsCard,
     PlayerEloCard,
     PlayerGameResultListCard,
   },
@@ -109,6 +100,7 @@ export default defineComponent({
         await fetchLeagueList();
         await fetchGameResultList();
         await fetchStatistics();
+        await fetchRanking();
         fetchElo();
       } catch (error) {
         console.log(error);
@@ -140,7 +132,6 @@ export default defineComponent({
 
     const fetchGameResultList = async () => {
       const response = await HaleyGGAPI.fetchGameResult({
-          'league': currentLeague.value,
           'players': [props.playerName]
         });
       playerInformation.value.gameResultList = response.data;
@@ -148,11 +139,16 @@ export default defineComponent({
 
     const fetchStatistics = async () => {
       const response = await HaleyGGAPI.fetchStatistics({
-          'league': currentLeague.value,
           'player': props.playerName
         });
       playerInformation.value.statistics = response.data[0];
     };
+
+    const fetchRanking = async () => {
+      const response = await HaleyGGAPI.fetchRanking();
+      playerInformation.value.ranking = response.data.find(
+        ranking => ranking.player_name == playerInformation.value.profile.name);
+    }
 
     const fetchElo = async () => {
       playerInformation.value.Elo = [

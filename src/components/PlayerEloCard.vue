@@ -3,7 +3,7 @@
     <va-card square outlined stripe>
       <va-card-title>Elo Chart</va-card-title>
       <va-card-content>
-        <LineChart :chartData="eloData" :options="options" style="min-height:330px; max-height:330px;"/>
+        <LineChart class="chart" :chartData="eloData" :options="options"/>
       </va-card-content>
     </va-card>
   </div>
@@ -53,3 +53,10 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.chart{
+  min-height: 394px;
+  max-height: 394px;
+}
+</style>
