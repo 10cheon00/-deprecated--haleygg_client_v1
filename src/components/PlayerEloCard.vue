@@ -1,12 +1,9 @@
 <template>
   <div>
-    <va-card >
+    <va-card square outlined stripe>
       <va-card-title>Elo Chart</va-card-title>
-      <va-card-content >
-        <LineChart
-          :chartData="testData"
-          :options="options"
-        />
+      <va-card-content>
+        <LineChart class="chart" :chartData="eloData" :options="options"/>
       </va-card-content>
     </va-card>
   </div>
@@ -27,7 +24,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const testData = {
+    const eloData = {
       datasets: [
         {
           data: props.elo,
@@ -50,9 +47,16 @@ export default defineComponent({
     };
 
     return {
-      testData,
+      eloData,
       options,
     };
   },
 });
 </script>
+
+<style scoped>
+.chart{
+  min-height: 394px;
+  max-height: 394px;
+}
+</style>

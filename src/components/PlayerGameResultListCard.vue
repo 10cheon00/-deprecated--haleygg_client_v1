@@ -1,103 +1,180 @@
 <template>
   <div>
-    <va-card>
-      <va-card-title class="user-gameresult">Recent Games</va-card-title>
+    <va-card square outlined stripe>
+      <va-card-title>
+        <div>Recent Games</div>
+      </va-card-title>
       <va-card-content>
-        <table
-          class="va-table va-table--striped va-table--hoverable"
-          style="width: 100%"
-        >
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>League</th>
-              <th>Description</th>
-              <th>Winners</th>
-              <th>Losers</th>
-              <th>Map</th>
-              <th>remarks</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="gameResult in paginatedGameResultList" :key="gameResult.id">
-              <td>{{ gameResult.date }}</td>
-              <td>{{ gameResult.league }}</td>
-              <td>{{ gameResult.description }}</td>
-              <td>
-                <div v-for="player in gameResult.winners" :key="player">
-                  <p>{{ player.name }} ({{ player.race }})</p>
+        <!-- Game result list -->
+        <div v-for="gameResult in gameResultList" :key="gameResult.id">
+          <div class="row game-result" :style="gameResult.winStateDecorator">
+            <!-- date, league, description -->
+            <div class="flex xl3 lg3 md3 sm3">
+              <div class="league">
+                {{ gameResult.league }} {{ gameResult.description }}
+              </div>
+              <div class="date">
+                {{ gameResult.date }}
+              </div>
+            </div>
+
+            <!-- player A -->
+            <div class="flex xl2 lg2 md2 sm2">
+              <div v-for="player in gameResult.playerA" :key="player.name">
+                <div
+                  :class="{
+                    you: player.name == you,
+                    'not-you': player.name != you,
+                    'player-a': true,
+                  }"
+                >
+                  <router-link :to="{ path: '/player/' + player.name }">
+                    {{ player.name }} ({{ player.race }})
+                  </router-link>
+                  &nbsp;
+                  <va-badge v-if="player.win_state" text="W" color="primary" />
+                  <va-badge v-else text="L" color="danger" />
                 </div>
-              </td>
-              <td>
-                <div v-for="player in gameResult.losers" :key="player">
-                  <p>{{ player.name }} ({{ player.race }})</p>
+              </div>
+            </div>
+
+            <!-- map -->
+            <div class="flex xl2 lg2 md2 sm2">
+              {{ gameResult.map }}
+            </div>
+
+            <!-- player B -->
+            <div class="flex xl2 lg2 md2 sm2">
+              <div v-for="player in gameResult.playerB" :key="player.name">
+                <div
+                  :class="{
+                    you: player.name == you,
+                    'not-you': player.name != you,
+                    'player-b': true,
+                  }"
+                >
+                  <va-badge v-if="player.win_state" text="W" color="primary" />
+                  <va-badge v-else text="L" color="danger" />&nbsp;
+                  <router-link :to="{ path: '/player/' + player.name }">
+                    {{ player.name }} ({{ player.race }})
+                  </router-link>
                 </div>
-              </td>
-              <td>{{ gameResult.map }}</td>
-              <td>{{ gameResult.remarks }}</td>
-            </tr>
-          </tbody>
-        </table>
-        <va-divider />
-        <!-- Paginator -->
-        <div class="row justify--center">
-          <va-pagination
-            flat
-            size="small"
-            v-model="pageNumber"
-            :pages="gameResultListLength"
-            :visible-pages="5"
-          />
+              </div>
+            </div>
+
+            <!-- remarks -->
+            <div class="flex xl3 lg3 md3 sm3">
+              {{ gameResult.remarks }}
+            </div>
+          </div>
         </div>
+
+        <va-divider />
       </va-card-content>
     </va-card>
   </div>
 </template>
 
 <script>
-import { ref, computed, defineComponent } from "vue";
+import { defineComponent, onUpdated, onMounted } from "vue";
 
 export default defineComponent({
+  components: {},
   props: {
     gameResultList: {
       type: Array,
       required: true,
     },
+    you: {
+      type: String,
+      required: false,
+    },
   },
   setup(props) {
-    const itemsInPageCount = 10;
-    const pageNumber = ref(1);
-    const gameResultListLength = computed(() => {
-      return Math.ceil(props.gameResultList.length / itemsInPageCount);
+    onMounted(() => {
+      decorateGameResult();
+      splitPlayersToTwoGroup();
     });
-    const paginatedGameResultList = computed(() => {
-      if (Array.isArray(props.gameResultList)) {
-        return props.gameResultList.slice(
-          itemsInPageCount * pageNumber.value - itemsInPageCount,
-          itemsInPageCount * pageNumber.value
-        );
-      } else {
-        return [];
-      }
+    onUpdated(() => {
+      decorateGameResult();
+      splitPlayersToTwoGroup();
     });
 
+    const decorateGameResult = () => {
+      if (props.you != undefined) {
+        const isPlayerWin = (players, playerName) => {
+          return players.some((e) => e["name"] == playerName && e["win_state"]);
+        };
+        props.gameResultList.forEach((gameResult) => {
+          if (isPlayerWin(gameResult.players, props.you)) {
+            gameResult.winStateDecorator = {
+              "border-left": "solid 0.5rem #007bff",
+              "border-right": "solid 0.5rem #007bff",
+            };
+          } else {
+            gameResult.winStateDecorator = {
+              "border-left": "solid 0.5rem #dc3545",
+              "border-right": "solid 0.5rem #dc3545",
+            };
+          }
+        });
+      }
+    };
+
+    const splitPlayersToTwoGroup = () => {
+      props.gameResultList.forEach((gameResult) => {
+        gameResult.playerA = [];
+        gameResult.playerB = [];
+        gameResult.players.forEach((player, index) => {
+          if (index % 2 == 0) {
+            //even
+            gameResult.playerA.push(player);
+          } else {
+            gameResult.playerB.push(player);
+          }
+        });
+      });
+    };
+
     return {
-      gameResultListLength,
-      paginatedGameResultList,
-      pageNumber,
     };
   },
 });
 </script>
 
 <style scoped>
-th,
-td {
+.game-result {
+  height: 5rem;
+  align-items: center;
   text-align: center;
-  vertical-align: middle;
+  margin-top: 0.25rem;
+  background-color: #f8f9fa;
 }
 
-td {
-  height: 5rem;
+.game-result .date {
+  font-size: 80%;
+  color: grey;
+  margin-top: 0.25rem;
+}
+
+.game-result .you {
+  font-weight: bold;
+  margin: 0.25rem;
+}
+
+.game-result .not-you {
+  color: grey;
+  margin: 0.25rem;
+}
+
+.player-a {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.player-b {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 }
 </style>

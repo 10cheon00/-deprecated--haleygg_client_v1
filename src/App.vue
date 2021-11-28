@@ -1,7 +1,7 @@
 <template>
   <div>
     <AppNavbar/>
-    <div class="main">
+    <div class="layout">
       <router-view :key="$route.fullPath" />
     </div>
   </div>
@@ -20,7 +20,15 @@ export default defineComponent({
 </script>
 
 <style>
+body{
+  background-color:lightgray;
+}
+
 a{
   color: inherit;
+}
+
+.layout{
+  background-color: white;
 }
 </style>

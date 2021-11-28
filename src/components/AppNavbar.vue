@@ -2,7 +2,10 @@
   <va-navbar text-color="light">
     <template #center>
       <va-navbar-item>
-        <router-link :to="{ name: 'Home' }">Home</router-link>
+        <router-link :to="{ name: 'HomeView' }">Home</router-link>
+      </va-navbar-item>
+      <va-navbar-item>
+        <router-link :to="{ name: 'CompareFormView' }">Compare</router-link>
       </va-navbar-item>
     </template>
     <template #right>

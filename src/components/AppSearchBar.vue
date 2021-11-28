@@ -1,14 +1,14 @@
 <template>
   <div>
-    <form @submit.prevent="searchUser">
+    <form @submit.prevent="searchPlayer">
       <va-input
-        placeholder="User Name"
-        @click-append-inner="searchUser()"
+        placeholder="Player Name"
+        @click-append-inner="searchPlayer()"
         type="text"
-        v-model="userName"
+        v-model="playerName"
       >
         <template #appendInner>
-          <va-icon name="search" @click="searchUser()" />
+          <va-icon name="search"/>
         </template>
       </va-input>
     </form>
@@ -22,13 +22,14 @@ import { useRouter } from "vue-router";
 export default defineComponent({
   setup() {
     const router = useRouter();
-    const userName = ref("");
-    const searchUser = () => {
-      router.push('/player/' + userName.value)
+    const playerName = ref("");
+    const searchPlayer = () => {
+      router.push('/player/' + playerName.value)
+      playerName.value = ""
     };
     return {
-      searchUser,
-      userName,
+      searchPlayer,
+      playerName,
     }
   },
 })
