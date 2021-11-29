@@ -69,6 +69,20 @@
           </div>
         </div>
 
+        <!-- Load more button -->
+        <div 
+          v-if="isNextURLExists()" 
+          class="load-more-button" 
+          @click="callFetchNextGameResultListMethod"
+        >
+          <div v-if="isNextGameResultFetched">
+            <va-icon size="large" name="update" />
+            <span>Load more</span>
+          </div>
+          <div v-else>
+            <va-progress-circle indeterminate />
+          </div>
+        </div>
         <va-divider />
       </va-card-content>
     </va-card>
@@ -76,7 +90,7 @@
 </template>
 
 <script>
-import { defineComponent, onUpdated, onMounted } from "vue";
+import { defineComponent, onUpdated, onMounted, inject, ref } from "vue";
 
 export default defineComponent({
   components: {},
@@ -91,9 +105,15 @@ export default defineComponent({
     },
   },
   setup(props) {
+    
+    const isNextURLExists = inject("isNextURLExists", false);
+    const fetchNextGameResultList = inject("fetchNextGameResultList");
+    const isNextGameResultFetched = ref(true);
+
     onMounted(() => {
       decorateGameResult();
       splitPlayersToTwoGroup();
+      console.log(props.gameResultList)
     });
     onUpdated(() => {
       decorateGameResult();
@@ -136,7 +156,16 @@ export default defineComponent({
       });
     };
 
+    const callFetchNextGameResultListMethod = async () => {
+      isNextGameResultFetched.value = false;
+      await fetchNextGameResultList();
+      isNextGameResultFetched.value = true;
+    };
+
     return {
+      isNextGameResultFetched,
+      isNextURLExists,
+      callFetchNextGameResultListMethod
     };
   },
 });
@@ -176,5 +205,14 @@ export default defineComponent({
   display: flex;
   justify-content: flex-start;
   align-items: center;
+}
+.load-more-button {
+  margin-top: 0.25rem;
+  height: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: solid 1px lightgray;
+  background-color: Gainsboro;
 }
 </style>

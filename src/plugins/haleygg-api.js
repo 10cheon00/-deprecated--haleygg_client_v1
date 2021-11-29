@@ -1,7 +1,7 @@
-import { axiosInstance } from "@/plugins/axios-wrapper.js";
+import AxiosInstance from "@/plugins/axios-wrapper.js";
 
 const HaleyGGAPI = {
-  axiosInstance: axiosInstance,
+  AxiosInstance: AxiosInstance,
   parseParams(params=undefined) {
     if(params == undefined){
       return "";
@@ -25,44 +25,38 @@ const HaleyGGAPI = {
     return queryString;
   },
   fetchProfileList() {
-    return this.axiosInstance({
+    return this.AxiosInstance({
       method: "GET",
       url: `/profiles/`
     });
   },
   fetchProfile(playerName) {
-    return this.axiosInstance({
+    return this.AxiosInstance({
       method: "GET",
       url: `/profiles/${playerName}/`
     });
   },
   fetchGameResult(params) {
     const queryString = this.parseParams(params)
-    return this.axiosInstance({
+    return this.AxiosInstance({
       method: "GET",
       url: `/game-results${queryString}`
     });
   },
   fetchStatistics(params) {
     const queryString = this.parseParams(params);
-    return this.axiosInstance({
+    return this.AxiosInstance({
       method: "GET",
       url: `/statistics${queryString}`
     });
   },
   fetchRanking(params) {
     const queryString = this.parseParams(params);
-    return this.axiosInstance({
+    return this.AxiosInstance({
       method: "GET",
       url: `/ranking${queryString}`
     });
-  },
-  fetchLeagueList() {
-    return this.axiosInstance({
-      method: "GET",
-      url: `/leagues/`
-    });
-  },
+  }
 }
 
 export default HaleyGGAPI
