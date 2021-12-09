@@ -6,7 +6,7 @@
         <va-card-content>
           <div class="row text--center">
             <div class="flex md6 summary summary-melee">
-              <div class="summary-title">밀리</div>
+              <div class="summary-title">개인</div>
               <div class="summary-value">
                 {{ summary.melee_winning_rate }}%
               </div>
@@ -46,6 +46,8 @@
 <script>
 import { defineComponent, onMounted, onUpdated, ref } from "vue";
 
+import { calculatePercentage } from "@/utils/statistics.js";
+
 export default defineComponent({
   props: {
     rawStatistics: {
@@ -62,6 +64,18 @@ export default defineComponent({
     const statistics = ref(null);
     const summary = ref({});
 
+    onMounted(() => {
+      calculateStatistics();
+      summaryStatistics();
+      convertStatisticsToString();
+    });
+
+    onUpdated(() => {
+      calculateStatistics();
+      summaryStatistics();
+      convertStatisticsToString();
+    });
+
     const calculateStatistics = () => {
       statistics.value = props.rawStatistics;
       calculateMeleeStatistics();
@@ -74,7 +88,7 @@ export default defineComponent({
     const calculateMeleeStatistics = () => {
       statistics.value.melee_lose_count =
         statistics.value.melee_game_count - statistics.value.melee_win_count;
-      statistics.value.melee_winning_rate = calculatePercentageWithWinAndLose(
+      statistics.value.melee_winning_rate = calculatePercentage(
         statistics.value.melee_win_count,
         statistics.value.melee_game_count
       );
@@ -85,7 +99,7 @@ export default defineComponent({
         statistics.value.top_and_bottom_game_count -
         statistics.value.top_and_bottom_win_count;
       statistics.value.top_and_bottom_winning_rate =
-        calculatePercentageWithWinAndLose(
+        calculatePercentage(
           statistics.value.top_and_bottom_win_count,
           statistics.value.top_and_bottom_game_count
         );
@@ -113,20 +127,20 @@ export default defineComponent({
         statistics.value.protoss_total_lose_count +
         statistics.value.protoss_total_win_count;
 
-      statistics.value.pvp_winning_rate = calculatePercentageWithWinAndLose(
+      statistics.value.pvp_winning_rate = calculatePercentage(
         statistics.value.pvp_win_count,
         statistics.value.pvp_game_count
       );
-      statistics.value.pvt_winning_rate = calculatePercentageWithWinAndLose(
+      statistics.value.pvt_winning_rate = calculatePercentage(
         statistics.value.pvt_win_count,
         statistics.value.pvt_game_count
       );
-      statistics.value.pvz_winning_rate = calculatePercentageWithWinAndLose(
+      statistics.value.pvz_winning_rate = calculatePercentage(
         statistics.value.pvz_win_count,
         statistics.value.pvz_game_count
       );
       statistics.value.protoss_total_winning_rate =
-        calculatePercentageWithWinAndLose(
+        calculatePercentage(
           statistics.value.protoss_total_win_count,
           statistics.value.protoss_total_game_count
         );
@@ -154,21 +168,21 @@ export default defineComponent({
         statistics.value.terran_total_lose_count +
         statistics.value.terran_total_win_count;
 
-      statistics.value.tvp_winning_rate = calculatePercentageWithWinAndLose(
+      statistics.value.tvp_winning_rate = calculatePercentage(
         statistics.value.tvp_win_count,
         statistics.value.tvp_game_count
       );
-      statistics.value.tvt_winning_rate = calculatePercentageWithWinAndLose(
+      statistics.value.tvt_winning_rate = calculatePercentage(
         statistics.value.tvt_win_count,
         statistics.value.tvt_game_count
       );
-      statistics.value.tvz_winning_rate = calculatePercentageWithWinAndLose(
+      statistics.value.tvz_winning_rate = calculatePercentage(
         statistics.value.tvz_win_count,
         statistics.value.tvz_game_count
       );
 
       statistics.value.terran_total_winning_rate =
-        calculatePercentageWithWinAndLose(
+        calculatePercentage(
           statistics.value.terran_total_win_count,
           statistics.value.terran_total_game_count
         );
@@ -196,32 +210,24 @@ export default defineComponent({
         statistics.value.zerg_total_lose_count +
         statistics.value.zerg_total_win_count;
 
-      statistics.value.zvp_winning_rate = calculatePercentageWithWinAndLose(
+      statistics.value.zvp_winning_rate = calculatePercentage(
         statistics.value.zvp_win_count,
         statistics.value.zvp_game_count
       );
-      statistics.value.zvt_winning_rate = calculatePercentageWithWinAndLose(
+      statistics.value.zvt_winning_rate = calculatePercentage(
         statistics.value.zvt_win_count,
         statistics.value.zvt_game_count
       );
-      statistics.value.zvz_winning_rate = calculatePercentageWithWinAndLose(
+      statistics.value.zvz_winning_rate = calculatePercentage(
         statistics.value.zvz_win_count,
         statistics.value.zvz_game_count
       );
 
       statistics.value.zerg_total_winning_rate =
-        calculatePercentageWithWinAndLose(
+        calculatePercentage(
           statistics.value.zerg_total_win_count,
           statistics.value.zerg_total_game_count
         );
-    };
-
-    const calculatePercentageWithWinAndLose = (wins, games) => {
-      const result = Math.floor((wins / games) * 1000) / 10;
-      if (isNaN(result)) {
-        return 0;
-      }
-      return result;
     };
 
     const summaryStatistics = () => {
@@ -230,27 +236,27 @@ export default defineComponent({
         statistics.value.top_and_bottom_winning_rate;
     };
 
-    const combineStatisticsToString = () => {
+    const convertStatisticsToString = () => {
       const result = [];
       result.push({
-        title: `밀리 다승`,
+        title: `개인 다승 순위`,
         value: `${props.ranking.melee_win_count_rank}등`
       });
 
       result.push({
-        title: `팀플 다승`,
+        title: `팀플 다승 순위`,
         value: `${props.ranking.top_and_bottom_win_count_rank}등`
       })
 
       result.push({
-        title: `밀리`,
+        title: `개인 전적`,
         value: `
           ${statistics.value.melee_win_count}승
           ${statistics.value.melee_lose_count}패`,
       });
 
       result.push({
-        title: `팀플`,
+        title: `팀플 전적`,
         value: `
           ${statistics.value.top_and_bottom_win_count}승
           ${statistics.value.top_and_bottom_lose_count}패`,
@@ -282,18 +288,6 @@ export default defineComponent({
 
       statistics.value = result;
     };
-
-    onMounted(() => {
-      calculateStatistics();
-      summaryStatistics();
-      combineStatisticsToString();
-    });
-
-    onUpdated(() => {
-      calculateStatistics();
-      summaryStatistics();
-      combineStatisticsToString();
-    });
 
     return {
       statistics,

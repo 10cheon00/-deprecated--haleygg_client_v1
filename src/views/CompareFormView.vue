@@ -33,7 +33,7 @@
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 
-import HaleyGGAPI from "@/plugins/haleygg-api.js";
+import AxiosInstance from "@/plugins/axios-wrapper.js";
 
 export default defineComponent({
   setup() {
@@ -67,7 +67,10 @@ export default defineComponent({
 
     onMounted(async () => {
       try{
-        const response = await HaleyGGAPI.fetchProfileList();
+        const response = await AxiosInstance({
+          method: "GET",
+          url: `/profiles`
+        })
         response.data.forEach(profile => {
           playerNameList.value.push(profile.name);
         });

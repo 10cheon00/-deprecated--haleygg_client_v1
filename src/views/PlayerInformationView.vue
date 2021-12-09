@@ -31,7 +31,7 @@
         </div>
       </div>
     </div>
-    <div v-else class="row justify--center align--center">
+    <div v-else class="row justify--center align--center" style="height:500px;">
       <va-progress-circle indeterminate />
     </div>
   </div>
@@ -46,7 +46,6 @@ import PlayerProfileCard from "@/components/PlayerProfileCard.vue";
 import PlayerStatisticsCard from "@/components/PlayerStatisticsCard.vue";
 import PlayerEloCard from "@/components/PlayerEloCard.vue";
 
-// import HaleyGGAPI from "@/plugins/haleygg-api.js";
 import AxiosInstance from "@/plugins/axios-wrapper.js";
 
 
@@ -101,7 +100,6 @@ export default defineComponent({
           method: "GET",
           url: `/profiles/${props.playerName}`
         });
-        // const response = await HaleyGGAPI.fetchProfile(props.playerName);
         playerInformation.value.profile = response.data;
       }
     };
@@ -111,9 +109,6 @@ export default defineComponent({
         method: "GET",
         url: `/game-results?players=${props.playerName}`
       });
-      // const response = await HaleyGGAPI.fetchGameResult({
-      //   players: [props.playerName],
-      // });
       playerInformation.value.gameResultList = response.data.results;
       playerInformation.value.nextGameResultListURL = response.data.next;
     };
@@ -121,20 +116,16 @@ export default defineComponent({
     const fetchStatistics = async () => {
       const response = await AxiosInstance({
         method: "GET",
-        url: `/statistics?player=${props.playerName}`
+        url: `/profiles/${props.playerName}/statistics`
       });
-      // const response = await HaleyGGAPI.fetchStatistics({
-      //   player: props.playerName,
-      // });
       playerInformation.value.statistics = response.data[0];
     };
 
     const fetchRanking = async () => {
       const response = await AxiosInstance({
         method: "GET",
-        url: `/ranking`
+        url: `/profiles/ranks`
       });
-      // const response = await HaleyGGAPI.fetchRanking();
       playerInformation.value.ranking = response.data.find(
         (ranking) => ranking.player_name == playerInformation.value.profile.name
       );
@@ -157,7 +148,6 @@ export default defineComponent({
           method:"GET",
           url: playerInformation.value.nextGameResultListURL
         });
-        console.log(response.data.results)
         playerInformation.value.gameResultList = 
           playerInformation.value.gameResultList.concat(response.data.results);
         

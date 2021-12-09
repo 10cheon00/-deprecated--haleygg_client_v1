@@ -7,7 +7,12 @@
       <va-card-content>
         <!-- Game result list -->
         <div v-for="gameResult in gameResultList" :key="gameResult.id">
-          <div class="row game-result" :style="gameResult.winStateDecorator">
+          <div :class="{
+              'row': true,
+              'game-result': true,
+              'is-win-game': gameResult.isPlayerWin != null && gameResult.isPlayerWin,
+              'is-lose-game': gameResult.isPlayerWin != null && !gameResult.isPlayerWin
+          }" >
             <!-- date, league, description -->
             <div class="flex xl3 lg3 md3 sm3">
               <div class="league">
@@ -77,7 +82,7 @@
         >
           <div v-if="isNextGameResultFetched">
             <va-icon size="large" name="update" />
-            <span>Load more</span>
+            <span>&nbsp;Load more</span>
           </div>
           <div v-else>
             <va-progress-circle indeterminate />
@@ -105,38 +110,27 @@ export default defineComponent({
     },
   },
   setup(props) {
-    
     const isNextURLExists = inject("isNextURLExists", false);
     const fetchNextGameResultList = inject("fetchNextGameResultList");
     const isNextGameResultFetched = ref(true);
 
     onMounted(() => {
-      decorateGameResult();
-      splitPlayersToTwoGroup();
-      console.log(props.gameResultList)
-    });
-    onUpdated(() => {
-      decorateGameResult();
+      chooseWinnerEachGameResultInList();
       splitPlayersToTwoGroup();
     });
 
-    const decorateGameResult = () => {
+    onUpdated(() => {
+      chooseWinnerEachGameResultInList();
+      splitPlayersToTwoGroup();
+    });
+
+    const chooseWinnerEachGameResultInList = () => {
       if (props.you != undefined) {
         const isPlayerWin = (players, playerName) => {
           return players.some((e) => e["name"] == playerName && e["win_state"]);
         };
         props.gameResultList.forEach((gameResult) => {
-          if (isPlayerWin(gameResult.players, props.you)) {
-            gameResult.winStateDecorator = {
-              "border-left": "solid 0.5rem #007bff",
-              "border-right": "solid 0.5rem #007bff",
-            };
-          } else {
-            gameResult.winStateDecorator = {
-              "border-left": "solid 0.5rem #dc3545",
-              "border-right": "solid 0.5rem #dc3545",
-            };
-          }
+          gameResult.isPlayerWin = isPlayerWin(gameResult.players, props.you);
         });
       }
     };
@@ -184,6 +178,16 @@ export default defineComponent({
   font-size: 80%;
   color: grey;
   margin-top: 0.25rem;
+}
+
+.is-win-game { 
+  border-left: solid 0.5rem #007bff;
+  border-right: solid 0.5rem #007bff;
+}
+
+.is-lose-game {
+  border-left: solid 0.5rem #dc3545;
+  border-right: solid 0.5rem #dc3545;
 }
 
 .game-result .you {
