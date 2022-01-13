@@ -1,17 +1,16 @@
 <template>
   <div>
-    <GameResultFormView />
+    <AppNavbar/>
+    <div class="layout">
+      <router-view :key="$route.fullPath" />
+    </div>
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import GameResultFormView from "@/views/GameResultFormView.vue";
 
 export default defineComponent({
-  components: {
-    GameResultFormView,
-  },
   setup() {},
 });
 </script>
