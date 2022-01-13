@@ -1,10 +1,20 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div>
+    <GameResultFormView />
   </div>
-  <router-view/>
 </template>
+
+<script>
+import { defineComponent } from "vue";
+import GameResultFormView from "@/views/GameResultFormView.vue";
+
+export default defineComponent({
+  components: {
+    GameResultFormView,
+  },
+  setup() {},
+});
+</script>
 
 <style>
 #app {
