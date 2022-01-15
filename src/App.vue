@@ -1,6 +1,5 @@
 <template>
   <div>
-    <AppNavbar/>
     <div class="layout">
       <router-view :key="$route.fullPath" />
     </div>
@@ -35,5 +34,13 @@ export default defineComponent({
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+
+body{
+  background-color:lightgray;
+}
+
+.layout{
+  background-color: white;
 }
 </style>

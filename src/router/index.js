@@ -4,7 +4,7 @@ const routes = [
   {
     path: "/",
     name: "GameResultFormView",
-    component: () => import(/* webpackChunkName: "about" */ "@/views/GameResultFormView.vue"),
+    component: () => import("@/views/GameResultFormView.vue"),
   },
 ]
 
