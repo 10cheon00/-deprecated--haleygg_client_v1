@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- title -->
-    <va-card square outlined class="title-card">
+    <va-card outlined square class="title-card">
       <va-card-content style="text-align: start">
         <h2 class="display-2">전적 추가</h2>
       </va-card-content>
@@ -19,7 +19,10 @@
 
     <!-- buttons -->
     <div class="row justify--space-between">
-      <va-button :rounded="false" icon="add" @click="addNewGameResultForm()">
+      <va-button 
+        icon="add"
+        :rounded="false"
+        @click="addNewGameResultForm()">
         새 결과 추가
       </va-button>
       <va-button 

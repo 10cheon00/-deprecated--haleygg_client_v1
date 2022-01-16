@@ -2,9 +2,19 @@ import { createRouter, createWebHistory } from "vue-router"
 
 const routes = [
   {
-    path: "/",
+    path: "/add-game-result",
     name: "GameResultFormView",
     component: () => import("@/views/GameResultFormView.vue"),
+  },
+  {
+    path: "/signin",
+    name: "SignIn",
+    component: () => import("@/views/SignInView.vue")
+  },
+  {
+    path: "/signup",
+    name: "SignUp",
+    component: () => import("@/views/SignUpView.vue")
   },
 ]
 

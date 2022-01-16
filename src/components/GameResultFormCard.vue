@@ -1,6 +1,6 @@
 <template>
   <div>
-    <va-card square outlined class="game-result-form">
+    <va-card outlined square class="game-result-form">
       <va-card-title>게임 결과</va-card-title>
       <va-card-content>
         <div class="row">
@@ -32,8 +32,8 @@
                 :options="clanData.playerList"
               />
               <va-button-toggle
-                class="flex"
                 flat
+                class="flex"
                 size="small"
                 v-model="formResult.winnersRace"
                 :options="raceList"
@@ -50,8 +50,8 @@
                 :options="clanData.playerList"
               />
               <va-button-toggle
-                class="flex"
                 flat
+                class="flex"
                 size="small"
                 v-model="formResult.losersRace"
                 :options="raceList"
@@ -109,8 +109,8 @@ export default defineComponent({
     const clanData = inject("clanData");
     return {
       clanData,
-      raceList,
-      formResult
+      formResult,
+      raceList
     };
   },
 });
