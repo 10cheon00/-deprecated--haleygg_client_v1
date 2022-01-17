@@ -84,15 +84,18 @@ export default defineComponent({
       nick_name: "",
       favorate_race: "",
     });
+    const form = ref(null)
     const raceList = [ "테란", "저그", "프로토스" ];
     const verificationPassword = ref("");
-    const form = ref(null)
+
     const signUp = () => {
       const isValidate = form.value.validate();
       if(isValidate){
         // do Sign Up
+        alert("seems to good")
       }
     }
+    
     return {
       form,
       raceList,

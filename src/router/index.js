@@ -16,6 +16,11 @@ const routes = [
     name: "SignUp",
     component: () => import("@/views/SignUpView.vue")
   },
+  {
+    path: "/elo-rank",
+    name: "EloRank",
+    component: () => import("@/views/EloRankView.vue")
+  },
 ]
 
 const router = createRouter({
